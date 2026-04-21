@@ -139,17 +139,17 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
   ]
 
   return (
-    <div className="border border-border bg-card">
+    <div className="bg-card">
       {/* Tab Bar */}
-      <div className="flex items-end justify-between border-b border-border px-8 pt-6">
+      <div className="flex items-end justify-between border-b border-border px-8 pt-8 pb-0">
         <div className="flex gap-0">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 text-sm tracking-wide transition-colors duration-150 ${
+              className={`px-6 py-4 font-serif text-sm tracking-wide transition-colors duration-150 ${
                 activeTab === tab.id
-                  ? "border-b-2 border-foreground font-semibold text-foreground"
+                  ? "border-b-2 border-foreground text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -162,7 +162,7 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
             <Button
               onClick={handleDownloadExecutive}
               variant="outline"
-              className="flex items-center gap-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
+              className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
             >
               <Download className="h-4 w-4" />
               Download Summary
@@ -171,7 +171,7 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
             <Button
               onClick={handleDownloadFull}
               variant="outline"
-              className="flex items-center gap-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
+              className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
             >
               <Download className="h-4 w-4" />
               Download Full Report
@@ -184,17 +184,17 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
       {activeTab === "executive" && (
         <div className="divide-y divide-border">
           {/* Homepage Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               Homepage Messaging & Visual Hierarchy
             </h4>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-3">
               {executiveHomepage.map((finding, idx) => (
                 <li
                   key={idx}
-                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+                  className="flex items-start gap-4 text-sm leading-relaxed text-muted-foreground"
                 >
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
+                  <span className="mt-2 h-1 w-1 shrink-0 bg-foreground" />
                   {finding}
                 </li>
               ))}
@@ -202,17 +202,17 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
           </div>
 
           {/* Promotions Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               Promotional Strategy & Offers
             </h4>
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-3">
               {executivePromotions.map((finding, idx) => (
                 <li
                   key={idx}
-                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+                  className="flex items-start gap-4 text-sm leading-relaxed text-muted-foreground"
                 >
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
+                  <span className="mt-2 h-1 w-1 shrink-0 bg-foreground" />
                   {finding}
                 </li>
               ))}
@@ -220,8 +220,8 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
           </div>
 
           {/* Product Discovery Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               Product Discovery Experience
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -230,8 +230,8 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
           </div>
 
           {/* AI-Powered Features Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               AI-Powered Features
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -245,98 +245,98 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
       {activeTab === "full" && (
         <div className="divide-y divide-border">
           {/* Homepage Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-8 font-serif text-lg font-semibold tracking-wide text-foreground">
               Homepage Messaging & Visual Hierarchy
             </h4>
 
-            <div className="mb-6 space-y-4">
+            <div className="mb-8 space-y-6">
               <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Hero Message</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullHomeHero?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullHomeHero?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullHomeHero?.advantage || "coming soon"}</p>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Hero Message</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeHero?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeHero?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeHero?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
-              <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Visual Hierarchy</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullHomeVisual?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullHomeVisual?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullHomeVisual?.advantage || "coming soon"}</p>
+              <div className="border-t border-border pt-6">
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Visual Hierarchy</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeVisual?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeVisual?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeVisual?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
-              <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Brand Voice</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullHomeBrand?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullHomeBrand?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullHomeBrand?.advantage || "coming soon"}</p>
+              <div className="border-t border-border pt-6">
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Brand Voice</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeBrand?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeBrand?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeBrand?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
-              <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Call-to-Action</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullHomeCTA?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullHomeCTA?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullHomeCTA?.advantage || "coming soon"}</p>
+              <div className="border-t border-border pt-6">
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Call-to-Action</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeCTA?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeCTA?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeCTA?.advantage || "coming soon"}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Promotions Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-8 font-serif text-lg font-semibold tracking-wide text-foreground">
               Promotional Strategy & Offers
             </h4>
 
-            <div className="mb-6 space-y-4">
+            <div className="mb-8 space-y-6">
               <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Active Promotions</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullPromoActive?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullPromoActive?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullPromoActive?.advantage || "coming soon"}</p>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Active Promotions</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoActive?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoActive?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoActive?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
-              <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Promotional Placement</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullPromoPlacement?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullPromoPlacement?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullPromoPlacement?.advantage || "coming soon"}</p>
+              <div className="border-t border-border pt-6">
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Promotional Placement</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoPlacement?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoPlacement?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoPlacement?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
-              <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Urgency Mechanics</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullPromoUrgency?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullPromoUrgency?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullPromoUrgency?.advantage || "coming soon"}</p>
+              <div className="border-t border-border pt-6">
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Urgency Mechanics</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoUrgency?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoUrgency?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoUrgency?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
-              <div>
-                <h5 className="mb-2 text-xs font-semibold text-foreground">Target Audience</h5>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  <p><strong>{website1}:</strong> {fullPromoAudience?.company_a || "coming soon"}</p>
-                  <p><strong>{website2}:</strong> {fullPromoAudience?.company_b || "coming soon"}</p>
-                  <p><strong>Advantage:</strong> {fullPromoAudience?.advantage || "coming soon"}</p>
+              <div className="border-t border-border pt-6">
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Target Audience</h5>
+                <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoAudience?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoAudience?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoAudience?.advantage || "coming soon"}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Product Discovery Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               Product Discovery Experience
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -345,8 +345,8 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
           </div>
 
           {/* AI-Powered Features Section */}
-          <div className="px-8 py-6">
-            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+          <div className="px-8 py-8">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               AI-Powered Features
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -356,26 +356,26 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
 
           {/* Core Dynamic Section */}
           {coreDynamic && coreDynamic !== "coming soon" && (
-            <div className="px-8 py-6 bg-secondary/30">
+            <div className="px-8 py-8 bg-secondary">
               <p className="text-sm leading-relaxed text-foreground">
-                <strong>Key Insight:</strong> {coreDynamic}
+                <strong className="font-serif">Key Insight:</strong> {coreDynamic}
               </p>
             </div>
           )}
 
           {/* Appendix Section */}
           {appendix && appendix.length > 0 && (
-            <div className="px-8 py-6">
-              <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+            <div className="px-8 py-8">
+              <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
                 Appendix
               </h4>
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-3">
                 {appendix.map((item, idx) => (
                   <li
                     key={idx}
-                    className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+                    className="flex items-start gap-4 text-sm leading-relaxed text-muted-foreground"
                   >
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
+                    <span className="mt-2 h-1 w-1 shrink-0 bg-foreground" />
                     {item}
                   </li>
                 ))}
@@ -385,9 +385,9 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
         </div>
       )}
 
-      <div className="border-t border-border bg-secondary px-8 py-6">
-        <p className="mb-4 text-center text-xs text-muted-foreground">
-          Report generated on {new Date().toLocaleDateString()} | {website1} vs {website2}
+      <div className="border-t border-border bg-secondary px-8 py-8">
+        <p className="mb-6 text-center text-xs uppercase tracking-wide text-muted-foreground">
+          Report generated on {new Date().toLocaleDateString()} • {website1} vs {website2}
         </p>
         <div className="flex justify-center">
           <Button

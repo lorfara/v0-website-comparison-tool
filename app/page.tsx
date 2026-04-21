@@ -28,11 +28,14 @@ export default function Home() {
   }
 
   const handleAnalyze = async () => {
+    console.log('[v0] Analysis started for:', website1, 'vs', website2)
     setIsAnalyzing(true)
     setWebhookData(null)
+    setReportGenerated(false)
     abortControllerRef.current = new AbortController()
 
     try {
+      console.log('[v0] Sending webhook request...')
       const response = await sendToWebhook({
         event: 'analysis_started',
         timestamp: new Date().toISOString(),
@@ -40,10 +43,15 @@ export default function Home() {
         website2,
       })
 
-      if (abortControllerRef.current?.signal.aborted) return
+      if (abortControllerRef.current?.signal.aborted) {
+        console.log('[v0] Analysis was aborted')
+        return
+      }
 
+      console.log('[v0] Webhook response received:', response)
       setWebhookData(response)
       setReportGenerated(true)
+      console.log('[v0] Analysis complete, report generated')
     } catch (error) {
       console.error('[v0] Analysis failed:', error)
     } finally {

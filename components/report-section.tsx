@@ -61,7 +61,11 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     Promise.all([
       loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
       loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
-    ]).then(() => setScriptsLoaded(true))
+    ]).then(() => {
+      setScriptsLoaded(true)
+    }).catch((err) => {
+      console.error("[v0] Failed to load PDF scripts:", err)
+    })
   }, [])
 
   // Data mappings based on webhook structure
@@ -145,7 +149,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       pdf.save(filename)
     } catch (error) {
-      console.error("PDF generation failed:", error)
+      console.error("[v0] PDF generation failed:", error)
       alert("Failed to generate PDF. Please try again.")
     } finally {
       setIsGeneratingPdf(false)

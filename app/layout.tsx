@@ -15,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Williams Sonoma Competitive Agent',
+  title: 'Website Competitive Analysis Agent',
   description: 'Compare competitor websites across four dimensions',
   generator: 'v0.app',
   icons: {

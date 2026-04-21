@@ -22,7 +22,6 @@ export function CompetitorForm({
   isAnalyzing,
 }: CompetitorFormProps) {
   const handleClick = () => {
-    console.log('[v0] Button clicked - website1:', website1, 'website2:', website2, 'isAnalyzing:', isAnalyzing)
     onAnalyze()
   }
 

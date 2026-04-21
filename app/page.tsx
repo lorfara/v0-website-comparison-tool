@@ -4,7 +4,8 @@ import { useState, useRef } from "react"
 import { Header } from "@/components/header"
 import { CompetitorForm } from "@/components/competitor-form"
 import { ReportSection } from "@/components/report-section"
-import { sendToWebhook, type WebhookResponseData } from "@/lib/webhook"
+import { sendToWebhook } from "@/lib/webhook"
+import type { WebhookResponseData } from "@/lib/webhook-types"
 
 export default function Home() {
   const [website1, setWebsite1] = useState("CB2.com")
@@ -28,14 +29,12 @@ export default function Home() {
   }
 
   const handleAnalyze = async () => {
-    console.log('[v0] Analysis started for:', website1, 'vs', website2)
     setIsAnalyzing(true)
     setWebhookData(null)
     setReportGenerated(false)
     abortControllerRef.current = new AbortController()
 
     try {
-      console.log('[v0] Sending webhook request...')
       const response = await sendToWebhook({
         event: 'analysis_started',
         timestamp: new Date().toISOString(),
@@ -43,19 +42,16 @@ export default function Home() {
         website2,
       })
 
-      if (abortControllerRef.current?.signal.aborted) {
-        console.log('[v0] Analysis was aborted')
-        return
-      }
+      if (abortControllerRef.current?.signal.aborted) return
 
-      console.log('[v0] Webhook response received:', response)
       setWebhookData(response)
       setReportGenerated(true)
-      console.log('[v0] Analysis complete, report generated')
     } catch (error) {
       console.error('[v0] Analysis failed:', error)
     } finally {
-      setIsAnalyzing(false)
+      if (!abortControllerRef.current?.signal.aborted) {
+        setIsAnalyzing(false)
+      }
       abortControllerRef.current = null
     }
   }

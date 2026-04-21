@@ -1,14 +1,25 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Download } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
+import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send, X } from "lucide-react"
 
 interface ReportSectionProps {
   website1: string
   website2: string
 }
 
+interface FeedbackState {
+  rating: "helpful" | "not-helpful" | null
+  showChat: boolean
+  question: string
+  messages: { role: "user" | "assistant"; content: string }[]
+}
+
 export function ReportSection({ website1, website2 }: ReportSectionProps) {
+  const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
+
   const dimensions = [
     {
       title: "Homepage Messaging & Visual Hierarchy",
@@ -43,6 +54,52 @@ export function ReportSection({ website1, website2 }: ReportSectionProps) {
       ],
     },
   ]
+
+  const getFeedback = (index: number): FeedbackState => {
+    return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
+  }
+
+  const setRating = (index: number, rating: "helpful" | "not-helpful") => {
+    setFeedback((prev) => ({
+      ...prev,
+      [index]: { ...getFeedback(index), rating },
+    }))
+  }
+
+  const toggleChat = (index: number) => {
+    setFeedback((prev) => ({
+      ...prev,
+      [index]: { ...getFeedback(index), showChat: !getFeedback(index).showChat },
+    }))
+  }
+
+  const setQuestion = (index: number, question: string) => {
+    setFeedback((prev) => ({
+      ...prev,
+      [index]: { ...getFeedback(index), question },
+    }))
+  }
+
+  const submitQuestion = (index: number) => {
+    const currentFeedback = getFeedback(index)
+    if (!currentFeedback.question.trim()) return
+
+    const userMessage = currentFeedback.question
+    const assistantResponse = `Thank you for your question about ${dimensions[index].title}. This insight is based on our analysis of current homepage layouts, promotional strategies, and feature implementations. Would you like me to elaborate on any specific finding?`
+
+    setFeedback((prev) => ({
+      ...prev,
+      [index]: {
+        ...currentFeedback,
+        question: "",
+        messages: [
+          ...currentFeedback.messages,
+          { role: "user", content: userMessage },
+          { role: "assistant", content: assistantResponse },
+        ],
+      },
+    }))
+  }
 
   const handleDownload = () => {
     const reportContent = `
@@ -90,24 +147,122 @@ ${dim.findings.map((f) => `• ${f}`).join("\n")}
       </div>
 
       <div className="divide-y divide-border">
-        {dimensions.map((dimension, index) => (
-          <div key={index} className="px-8 py-6">
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
-              {dimension.title}
-            </h4>
-            <ul className="flex flex-col gap-2">
-              {dimension.findings.map((finding, findingIndex) => (
-                <li
-                  key={findingIndex}
-                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
-                >
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
-                  {finding}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+        {dimensions.map((dimension, index) => {
+          const sectionFeedback = getFeedback(index)
+          return (
+            <div key={index} className="px-8 py-6">
+              <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
+                {dimension.title}
+              </h4>
+              <ul className="mb-6 flex flex-col gap-2">
+                {dimension.findings.map((finding, findingIndex) => (
+                  <li
+                    key={findingIndex}
+                    className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+                  >
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
+                    {finding}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Feedback Section */}
+              <div className="border-t border-border pt-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Was this helpful?</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setRating(index, "helpful")}
+                      className={`h-8 w-8 p-0 ${
+                        sectionFeedback.rating === "helpful"
+                          ? "bg-green-100 text-green-700"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <ThumbsUp className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setRating(index, "not-helpful")}
+                      className={`h-8 w-8 p-0 ${
+                        sectionFeedback.rating === "not-helpful"
+                          ? "bg-red-100 text-red-700"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      <ThumbsDown className="h-4 w-4" />
+                    </Button>
+                    {sectionFeedback.rating && (
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        Thanks for your feedback
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => toggleChat(index)}
+                    className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    {sectionFeedback.showChat ? "Close" : "Ask a Question"}
+                  </Button>
+                </div>
+
+                {/* Chat Section */}
+                {sectionFeedback.showChat && (
+                  <div className="mt-4 border border-border bg-secondary/50 p-4">
+                    {sectionFeedback.messages.length > 0 && (
+                      <div className="mb-4 max-h-48 overflow-y-auto">
+                        {sectionFeedback.messages.map((message, msgIndex) => (
+                          <div
+                            key={msgIndex}
+                            className={`mb-3 ${
+                              message.role === "user" ? "text-right" : "text-left"
+                            }`}
+                          >
+                            <div
+                              className={`inline-block max-w-[80%] px-3 py-2 text-sm ${
+                                message.role === "user"
+                                  ? "bg-foreground text-background"
+                                  : "bg-card text-foreground border border-border"
+                              }`}
+                            >
+                              {message.content}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Textarea
+                        placeholder="Ask a clarifying question about this analysis..."
+                        value={sectionFeedback.question}
+                        onChange={(e) => setQuestion(index, e.target.value)}
+                        className="min-h-[60px] resize-none text-sm"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault()
+                            submitQuestion(index)
+                          }
+                        }}
+                      />
+                      <Button
+                        onClick={() => submitQuestion(index)}
+                        className="h-auto bg-foreground text-background hover:bg-foreground/90"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       <div className="border-t border-border bg-secondary px-8 py-4">

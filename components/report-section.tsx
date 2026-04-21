@@ -26,71 +26,25 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   const [activeTab, setActiveTab] = useState<TabId>("executive")
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
 
-  const FORTHCOMING = ["coming soon"]
+  // Data mappings based on webhook structure
+  const executiveHomepage = webhookData?.executive_summary?.homepage ?? ["coming soon", "coming soon", "coming soon"]
+  const executivePromotions = webhookData?.executive_summary?.promotions ?? ["coming soon", "coming soon", "coming soon"]
 
-  const dimensions = [
-    {
-      title: "Homepage Messaging & Visual Hierarchy",
-      findings: webhookData?.homepageMessaging?.findings ?? FORTHCOMING,
-    },
-    {
-      title: "Promotional Strategy & Offers",
-      findings: webhookData?.promotionalStrategy?.findings ?? FORTHCOMING,
-    },
-    {
-      title: "Product Discovery Experience",
-      findings: webhookData?.productDiscovery?.findings ?? FORTHCOMING,
-    },
-    {
-      title: "AI-Powered Features",
-      findings: webhookData?.aiFeatures?.findings ?? FORTHCOMING,
-    },
-  ]
+  const fullHomeHero = webhookData?.full_report?.homepage?.hero_message
+  const fullHomeVisual = webhookData?.full_report?.homepage?.visual_hierarchy
+  const fullHomeBrand = webhookData?.full_report?.homepage?.brand_voice
+  const fullHomeCTA = webhookData?.full_report?.homepage?.call_to_action
+
+  const fullPromoActive = webhookData?.full_report?.promotions?.active_promotions
+  const fullPromoPlacement = webhookData?.full_report?.promotions?.promotional_placement
+  const fullPromoUrgency = webhookData?.full_report?.promotions?.urgency_mechanics
+  const fullPromoAudience = webhookData?.full_report?.promotions?.target_audience
+
+  const coreDynamic = webhookData?.core_dynamic ?? "coming soon"
+  const appendix = webhookData?.appendix ?? []
 
   const getFeedback = (index: number): FeedbackState => {
     return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
-  }
-
-  const setRating = (index: number, rating: "helpful" | "not-helpful") => {
-    setFeedback((prev) => ({
-      ...prev,
-      [index]: { ...getFeedback(index), rating },
-    }))
-  }
-
-  const toggleChat = (index: number) => {
-    setFeedback((prev) => ({
-      ...prev,
-      [index]: { ...getFeedback(index), showChat: !getFeedback(index).showChat },
-    }))
-  }
-
-  const setQuestion = (index: number, question: string) => {
-    setFeedback((prev) => ({
-      ...prev,
-      [index]: { ...getFeedback(index), question },
-    }))
-  }
-
-  const submitQuestion = (index: number) => {
-    const currentFeedback = getFeedback(index)
-    if (!currentFeedback.question.trim()) return
-
-    const userMessage = currentFeedback.question
-    const assistantResponse = `Thank you for your question about ${dimensions[index].title}. This insight is based on our analysis of current homepage layouts, promotional strategies, and feature implementations. Would you like me to elaborate on any specific finding?`
-
-    setFeedback((prev) => ({
-      ...prev,
-      [index]: {
-        ...currentFeedback,
-        question: "",
-        messages: [
-          ...currentFeedback.messages,
-          { role: "user", content: userMessage },
-          { role: "assistant", content: assistantResponse },
-        ],
-      },
-    }))
   }
 
   const triggerDownload = (content: string, filename: string) => {
@@ -109,12 +63,14 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     const content = `
 EXECUTIVE SUMMARY
 =================
-${website1} vs ${website2}
-Generated: ${new Date().toLocaleDateString()}
+${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2}
+Generated: ${webhookData?.generated || new Date().toLocaleDateString()}
 
-${dimensions
-  .map((dim) => `${dim.title.toUpperCase()}\n${dim.findings[0]}`)
-  .join("\n\n")}
+HOMEPAGE MESSAGING & VISUAL HIERARCHY
+${executiveHomepage.map((f) => `• ${f}`).join("\n")}
+
+PROMOTIONAL STRATEGY & OFFERS
+${executivePromotions.map((f) => `• ${f}`).join("\n")}
     `.trim()
     triggerDownload(content, `executive-summary-${website1}-vs-${website2}.txt`)
   }
@@ -123,18 +79,56 @@ ${dimensions
     const content = `
 FULL COMPETITIVE ANALYSIS REPORT
 =================================
-${website1} vs ${website2}
-Generated: ${new Date().toLocaleDateString()}
+${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2}
+Generated: ${webhookData?.generated || new Date().toLocaleDateString()}
 
-${dimensions
-  .map(
-    (dim) => `
-${dim.title.toUpperCase()}
-${"-".repeat(dim.title.length)}
-${dim.findings.map((f) => `• ${f}`).join("\n")}
-`
-  )
-  .join("\n")}
+HOMEPAGE MESSAGING & VISUAL HIERARCHY
+
+Hero Message
+${webhookData?.company_a || website1}: ${fullHomeHero?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullHomeHero?.company_b || "coming soon"}
+Advantage: ${fullHomeHero?.advantage || "coming soon"}
+
+Visual Hierarchy
+${webhookData?.company_a || website1}: ${fullHomeVisual?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullHomeVisual?.company_b || "coming soon"}
+Advantage: ${fullHomeVisual?.advantage || "coming soon"}
+
+Brand Voice
+${webhookData?.company_a || website1}: ${fullHomeBrand?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullHomeBrand?.company_b || "coming soon"}
+Advantage: ${fullHomeBrand?.advantage || "coming soon"}
+
+Call-to-Action
+${webhookData?.company_a || website1}: ${fullHomeCTA?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullHomeCTA?.company_b || "coming soon"}
+Advantage: ${fullHomeCTA?.advantage || "coming soon"}
+
+PROMOTIONAL STRATEGY & OFFERS
+
+Active Promotions
+${webhookData?.company_a || website1}: ${fullPromoActive?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullPromoActive?.company_b || "coming soon"}
+Advantage: ${fullPromoActive?.advantage || "coming soon"}
+
+Promotional Placement
+${webhookData?.company_a || website1}: ${fullPromoPlacement?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullPromoPlacement?.company_b || "coming soon"}
+Advantage: ${fullPromoPlacement?.advantage || "coming soon"}
+
+Urgency Mechanics
+${webhookData?.company_a || website1}: ${fullPromoUrgency?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullPromoUrgency?.company_b || "coming soon"}
+Advantage: ${fullPromoUrgency?.advantage || "coming soon"}
+
+Target Audience
+${webhookData?.company_a || website1}: ${fullPromoAudience?.company_a || "coming soon"}
+${webhookData?.company_b || website2}: ${fullPromoAudience?.company_b || "coming soon"}
+Advantage: ${fullPromoAudience?.advantage || "coming soon"}
+
+${coreDynamic && coreDynamic !== "coming soon" ? `KEY INSIGHT\n${coreDynamic}\n` : ""}
+
+${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${item}`).join("\n")}` : ""}
     `.trim()
     triggerDownload(content, `full-report-${website1}-vs-${website2}.txt`)
   }
@@ -189,139 +183,166 @@ ${dim.findings.map((f) => `• ${f}`).join("\n")}
       {/* Executive Summary Tab */}
       {activeTab === "executive" && (
         <div className="divide-y divide-border">
-          {dimensions.map((dimension, index) => (
-            <div key={index} className="px-8 py-6">
-              <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
-                {dimension.title}
-              </h4>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {dimension.findings[0]}
-              </p>
-            </div>
-          ))}
+          {/* Homepage Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+              Homepage Messaging & Visual Hierarchy
+            </h4>
+            <ul className="flex flex-col gap-2">
+              {executiveHomepage.map((finding, idx) => (
+                <li
+                  key={idx}
+                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+                >
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
+                  {finding}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Promotions Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+              Promotional Strategy & Offers
+            </h4>
+            <ul className="flex flex-col gap-2">
+              {executivePromotions.map((finding, idx) => (
+                <li
+                  key={idx}
+                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
+                >
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
+                  {finding}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
 
       {/* Full Report Tab */}
       {activeTab === "full" && (
-      <div className="divide-y divide-border">
-        {dimensions.map((dimension, index) => {
-          const sectionFeedback = getFeedback(index)
-          return (
-            <div key={index} className="px-8 py-6">
-              <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground">
-                {dimension.title}
+        <div className="divide-y divide-border">
+          {/* Homepage Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+              Homepage Messaging & Visual Hierarchy
+            </h4>
+
+            <div className="mb-6 space-y-4">
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Hero Message</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullHomeHero?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullHomeHero?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullHomeHero?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Visual Hierarchy</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullHomeVisual?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullHomeVisual?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullHomeVisual?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Brand Voice</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullHomeBrand?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullHomeBrand?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullHomeBrand?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Call-to-Action</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullHomeCTA?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullHomeCTA?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullHomeCTA?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Promotions Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+              Promotional Strategy & Offers
+            </h4>
+
+            <div className="mb-6 space-y-4">
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Active Promotions</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullPromoActive?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullPromoActive?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullPromoActive?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Promotional Placement</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullPromoPlacement?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullPromoPlacement?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullPromoPlacement?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Urgency Mechanics</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullPromoUrgency?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullPromoUrgency?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullPromoUrgency?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+
+              <div>
+                <h5 className="mb-2 text-xs font-semibold text-foreground">Target Audience</h5>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p><strong>{website1}:</strong> {fullPromoAudience?.company_a || "coming soon"}</p>
+                  <p><strong>{website2}:</strong> {fullPromoAudience?.company_b || "coming soon"}</p>
+                  <p><strong>Advantage:</strong> {fullPromoAudience?.advantage || "coming soon"}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Core Dynamic Section */}
+          {coreDynamic && coreDynamic !== "coming soon" && (
+            <div className="px-8 py-6 bg-secondary/30">
+              <p className="text-sm leading-relaxed text-foreground">
+                <strong>Key Insight:</strong> {coreDynamic}
+              </p>
+            </div>
+          )}
+
+          {/* Appendix Section */}
+          {appendix && appendix.length > 0 && (
+            <div className="px-8 py-6">
+              <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+                Appendix
               </h4>
-              <ul className="mb-6 flex flex-col gap-2">
-                {dimension.findings.map((finding, findingIndex) => (
+              <ul className="flex flex-col gap-2">
+                {appendix.map((item, idx) => (
                   <li
-                    key={findingIndex}
+                    key={idx}
                     className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
                   >
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 bg-accent" />
-                    {finding}
+                    {item}
                   </li>
                 ))}
               </ul>
-
-              {/* Feedback Section */}
-              <div className="border-t border-border pt-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">Was this helpful?</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setRating(index, "helpful")}
-                      className={`h-8 w-8 p-0 ${
-                        sectionFeedback.rating === "helpful"
-                          ? "bg-green-100 text-green-700"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <ThumbsUp className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setRating(index, "not-helpful")}
-                      className={`h-8 w-8 p-0 ${
-                        sectionFeedback.rating === "not-helpful"
-                          ? "bg-red-100 text-red-700"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <ThumbsDown className="h-4 w-4" />
-                    </Button>
-                    {sectionFeedback.rating && (
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        Thanks for your feedback
-                      </span>
-                    )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleChat(index)}
-                    className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground"
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                    {sectionFeedback.showChat ? "Close" : "Ask a Question"}
-                  </Button>
-                </div>
-
-                {/* Chat Section */}
-                {sectionFeedback.showChat && (
-                  <div className="mt-4 border border-border bg-secondary/50 p-4">
-                    {sectionFeedback.messages.length > 0 && (
-                      <div className="mb-4 max-h-48 overflow-y-auto">
-                        {sectionFeedback.messages.map((message, msgIndex) => (
-                          <div
-                            key={msgIndex}
-                            className={`mb-3 ${
-                              message.role === "user" ? "text-right" : "text-left"
-                            }`}
-                          >
-                            <div
-                              className={`inline-block max-w-[80%] px-3 py-2 text-sm ${
-                                message.role === "user"
-                                  ? "bg-foreground text-background"
-                                  : "bg-card text-foreground border border-border"
-                              }`}
-                            >
-                              {message.content}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <Textarea
-                        placeholder="Ask a clarifying question about this analysis..."
-                        value={sectionFeedback.question}
-                        onChange={(e) => setQuestion(index, e.target.value)}
-                        className="min-h-[60px] resize-none text-sm"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault()
-                            submitQuestion(index)
-                          }
-                        }}
-                      />
-                      <Button
-                        onClick={() => submitQuestion(index)}
-                        className="h-auto bg-foreground text-background hover:bg-foreground/90"
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
-          )
-        })}
-      </div>
+          )}
+        </div>
       )}
 
       <div className="border-t border-border bg-secondary px-8 py-6">

@@ -1,16 +1,59 @@
+"use client"
+
+import { useState } from "react"
+import { Header } from "@/components/header"
+import { CompetitorForm } from "@/components/competitor-form"
+import { ReportSection } from "@/components/report-section"
+
 export default function Home() {
+  const [website1, setWebsite1] = useState("CB2.com")
+  const [website2, setWebsite2] = useState("WestElm.com")
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [reportGenerated, setReportGenerated] = useState(false)
+
+  const handleAnalyze = () => {
+    setIsAnalyzing(true)
+    // Simulate analysis
+    setTimeout(() => {
+      setIsAnalyzing(false)
+      setReportGenerated(true)
+    }, 2000)
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans">
-      <main className="flex w-full max-w-3xl flex-col items-center gap-8 px-6 py-16 text-center sm:items-start sm:text-left">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold tracking-tight">
-            Williams Sonoma Competitive Agent
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="mx-auto max-w-4xl px-6 py-12">
+        <div className="mb-12 text-center">
+          <h1 className="font-serif text-3xl tracking-wide text-foreground md:text-4xl">
+            Competitive Analysis Agent
           </h1>
-          <p className="max-w-md text-lg text-muted-foreground">
-            To get started, send a prompt or modify this page directly.
+          <div className="mx-auto mt-4 h-px w-24 bg-foreground" />
+        </div>
+
+        <div className="mb-10">
+          <p className="text-center text-muted-foreground leading-relaxed">
+            Enter two websites to compare across four dimensions: Product Assortment, 
+            Pricing Strategy, User Experience, and Brand Positioning.
           </p>
         </div>
+
+        <CompetitorForm
+          website1={website1}
+          website2={website2}
+          setWebsite1={setWebsite1}
+          setWebsite2={setWebsite2}
+          onAnalyze={handleAnalyze}
+          isAnalyzing={isAnalyzing}
+        />
+
+        {reportGenerated && (
+          <ReportSection 
+            website1={website1} 
+            website2={website2} 
+          />
+        )}
       </main>
     </div>
-  );
+  )
 }

@@ -55,12 +55,13 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Executive Summary - ${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2}</title>
+          <title>Website Competitive Analysis - Executive Summary</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: Georgia, serif; line-height: 1.6; color: #1a1a1a; }
             .container { max-width: 8.5in; margin: 0 auto; padding: 1in; }
             h1 { font-size: 28px; margin-bottom: 8px; letter-spacing: 2px; }
+            .report-type { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; }
             .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; border-bottom: 1px solid #ddd; padding-bottom: 16px; }
             h2 { font-size: 18px; margin-top: 32px; margin-bottom: 16px; letter-spacing: 1px; }
             ul { margin-left: 20px; margin-bottom: 16px; }
@@ -70,6 +71,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
         </head>
         <body>
           <div class="container">
+            <div class="report-type">Website Competitive Analysis</div>
             <h1>Executive Summary</h1>
             <div class="subtitle">${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2} • Generated ${webhookData?.generated || new Date().toLocaleDateString()}</div>
             
@@ -105,7 +107,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
       <!DOCTYPE html>
       <html>
         <head>
-          <title>Full Report - ${companyA} vs ${companyB}</title>
+          <title>Website Competitive Analysis - Full Report</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: Georgia, serif; line-height: 1.6; color: #1a1a1a; }
@@ -113,6 +115,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
             /* Cover */
             .cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; page-break-after: always; }
+            .cover .report-type { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
             .cover h1 { font-size: 32px; letter-spacing: 3px; margin-bottom: 12px; }
             .cover .subtitle { color: #555; font-size: 15px; margin-bottom: 48px; padding-bottom: 24px; border-bottom: 1px solid #ddd; }
             .cover .meta { font-size: 13px; color: #888; }
@@ -124,6 +127,12 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
             .toc-item .toc-title { color: #1a1a1a; }
             .toc-item .toc-page { color: #888; font-size: 12px; }
             .toc-sub { padding: 4px 0 4px 20px; font-size: 12px; color: #666; border-bottom: 1px dotted #eee; display: flex; justify-content: space-between; }
+
+            /* Executive Summary Section */
+            .exec-summary { page-break-after: always; }
+            .exec-summary h2 { font-size: 18px; margin-bottom: 16px; }
+            .exec-summary ul { margin-left: 20px; margin-bottom: 16px; }
+            .exec-summary li { margin-bottom: 8px; font-size: 14px; }
 
             /* Sections */
             .page { page-break-before: always; }
@@ -152,7 +161,8 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
             <!-- Cover Page -->
             <div class="cover">
-              <h1>Full Competitive<br/>Analysis Report</h1>
+              <div class="report-type">Website Competitive Analysis</div>
+              <h1>Full Report</h1>
               <div class="subtitle">${companyA} vs ${companyB}</div>
               <div class="meta">Generated ${webhookData?.generated || new Date().toLocaleDateString()}</div>
             </div>
@@ -160,20 +170,34 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
             <!-- Table of Contents -->
             <div class="toc">
               <h2>Table of Contents</h2>
-              <div class="toc-item"><span class="toc-title">1. Homepage Messaging & Visual Hierarchy</span><span class="toc-page">3</span></div>
-              <div class="toc-sub"><span>Hero Message</span><span>3</span></div>
-              <div class="toc-sub"><span>Visual Hierarchy</span><span>3</span></div>
-              <div class="toc-sub"><span>Brand Voice</span><span>3</span></div>
-              <div class="toc-sub"><span>Call-to-Action</span><span>3</span></div>
-              <div class="toc-item"><span class="toc-title">2. Promotional Strategy & Offers</span><span class="toc-page">4</span></div>
-              <div class="toc-sub"><span>Active Promotions</span><span>4</span></div>
-              <div class="toc-sub"><span>Promotional Placement</span><span>4</span></div>
-              <div class="toc-sub"><span>Urgency Mechanics</span><span>4</span></div>
-              <div class="toc-sub"><span>Target Audience</span><span>4</span></div>
-              <div class="toc-item"><span class="toc-title">3. Product Discovery Experience</span><span class="toc-page">5</span></div>
-              <div class="toc-item"><span class="toc-title">4. AI-Powered Features</span><span class="toc-page">5</span></div>
-              ${hasKeyInsight ? `<div class="toc-item"><span class="toc-title">Key Insight</span><span class="toc-page">6</span></div>` : ""}
-              ${hasAppendix ? `<div class="toc-item"><span class="toc-title">Appendix</span><span class="toc-page">6</span></div>` : ""}
+              <div class="toc-item"><span class="toc-title">Executive Summary</span><span class="toc-page">2</span></div>
+              <div class="toc-item"><span class="toc-title">1. Homepage Messaging & Visual Hierarchy</span><span class="toc-page">4</span></div>
+              <div class="toc-sub"><span>Hero Message</span><span>4</span></div>
+              <div class="toc-sub"><span>Visual Hierarchy</span><span>4</span></div>
+              <div class="toc-sub"><span>Brand Voice</span><span>4</span></div>
+              <div class="toc-sub"><span>Call-to-Action</span><span>4</span></div>
+              <div class="toc-item"><span class="toc-title">2. Promotional Strategy & Offers</span><span class="toc-page">5</span></div>
+              <div class="toc-sub"><span>Active Promotions</span><span>5</span></div>
+              <div class="toc-sub"><span>Promotional Placement</span><span>5</span></div>
+              <div class="toc-sub"><span>Urgency Mechanics</span><span>5</span></div>
+              <div class="toc-sub"><span>Target Audience</span><span>5</span></div>
+              <div class="toc-item"><span class="toc-title">3. Product Discovery Experience</span><span class="toc-page">6</span></div>
+              <div class="toc-item"><span class="toc-title">4. AI-Powered Features</span><span class="toc-page">6</span></div>
+              ${hasKeyInsight ? `<div class="toc-item"><span class="toc-title">Key Insight</span><span class="toc-page">7</span></div>` : ""}
+              ${hasAppendix ? `<div class="toc-item"><span class="toc-title">Appendix</span><span class="toc-page">7</span></div>` : ""}
+            </div>
+
+            <!-- Executive Summary -->
+            <div class="exec-summary">
+              <h2>Executive Summary</h2>
+              <h3>Homepage Messaging & Visual Hierarchy</h3>
+              <ul>
+                ${executiveHomepage.map((f) => `<li>${f}</li>`).join("")}
+              </ul>
+              <h3>Promotional Strategy & Offers</h3>
+              <ul>
+                ${executivePromotions.map((f) => `<li>${f}</li>`).join("")}
+              </ul>
             </div>
 
             <!-- Section 1: Homepage -->

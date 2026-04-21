@@ -37,7 +37,7 @@ export function CompetitorForm({
             value={website1}
             onChange={(e) => setWebsite1(e.target.value)}
             placeholder="Enter first website"
-            className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-foreground"
+            className="border-border bg-background text-muted-foreground placeholder:text-muted-foreground focus:text-foreground focus:ring-foreground"
           />
         </div>
         
@@ -51,7 +51,7 @@ export function CompetitorForm({
             value={website2}
             onChange={(e) => setWebsite2(e.target.value)}
             placeholder="Enter second website"
-            className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-foreground"
+            className="border-border bg-background text-muted-foreground placeholder:text-muted-foreground focus:text-foreground focus:ring-foreground"
           />
         </div>
       </div>

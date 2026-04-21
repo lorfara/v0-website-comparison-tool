@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Header } from "@/components/header"
 import { CompetitorForm } from "@/components/competitor-form"
 import { ReportSection } from "@/components/report-section"
@@ -10,6 +10,11 @@ export default function Home() {
   const [website2, setWebsite2] = useState("WestElm.com")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [reportGenerated, setReportGenerated] = useState(false)
+  const formRef = useRef<HTMLDivElement>(null)
+
+  const handleRerun = () => {
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
 
   const handleAnalyze = () => {
     setIsAnalyzing(true)
@@ -38,6 +43,7 @@ export default function Home() {
           </p>
         </div>
 
+        <div ref={formRef}>
         <CompetitorForm
           website1={website1}
           website2={website2}
@@ -46,11 +52,13 @@ export default function Home() {
           onAnalyze={handleAnalyze}
           isAnalyzing={isAnalyzing}
         />
+        </div>
 
         {reportGenerated && (
           <ReportSection 
             website1={website1} 
-            website2={website2} 
+            website2={website2}
+            onRerun={handleRerun}
           />
         )}
       </main>

@@ -8,6 +8,7 @@ import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send, X } from "lucide-r
 interface ReportSectionProps {
   website1: string
   website2: string
+  onRerun: () => void
 }
 
 interface FeedbackState {
@@ -17,7 +18,7 @@ interface FeedbackState {
   messages: { role: "user" | "assistant"; content: string }[]
 }
 
-export function ReportSection({ website1, website2 }: ReportSectionProps) {
+export function ReportSection({ website1, website2, onRerun }: ReportSectionProps) {
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
 
   const dimensions = [
@@ -265,10 +266,18 @@ ${dim.findings.map((f) => `• ${f}`).join("\n")}
         })}
       </div>
 
-      <div className="border-t border-border bg-secondary px-8 py-4">
-        <p className="text-center text-xs text-muted-foreground">
+      <div className="border-t border-border bg-secondary px-8 py-6">
+        <p className="mb-4 text-center text-xs text-muted-foreground">
           Report generated on {new Date().toLocaleDateString()} | {website1} vs {website2}
         </p>
+        <div className="flex justify-center">
+          <Button
+            onClick={onRerun}
+            className="bg-foreground px-8 py-2 text-sm tracking-wide text-background hover:bg-foreground/90"
+          >
+            Run Competitive Analysis
+          </Button>
+        </div>
       </div>
     </div>
   )

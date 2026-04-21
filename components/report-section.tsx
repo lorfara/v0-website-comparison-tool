@@ -218,6 +218,26 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
               ))}
             </ul>
           </div>
+
+          {/* Product Discovery Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+              Product Discovery Experience
+            </h4>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Coming soon — this dimension will be available in Phase 2.
+            </p>
+          </div>
+
+          {/* AI-Powered Features Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+              AI-Powered Features
+            </h4>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Coming soon — this dimension will be available in Phase 2.
+            </p>
+          </div>
         </div>
       )}
 
@@ -312,6 +332,26 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Product Discovery Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+              Product Discovery Experience
+            </h4>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Coming soon — this dimension will be available in Phase 2.
+            </p>
+          </div>
+
+          {/* AI-Powered Features Section */}
+          <div className="px-8 py-6">
+            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wider text-foreground">
+              AI-Powered Features
+            </h4>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Coming soon — this dimension will be available in Phase 2.
+            </p>
           </div>
 
           {/* Core Dynamic Section */}

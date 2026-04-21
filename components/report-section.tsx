@@ -275,7 +275,7 @@ ${dim.findings.map((f) => `• ${f}`).join("\n")}
             onClick={onRerun}
             className="bg-foreground px-8 py-2 text-sm tracking-wide text-background hover:bg-foreground/90"
           >
-            Run Competitive Analysis
+            Run another competitive analysis
           </Button>
         </div>
       </div>

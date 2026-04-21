@@ -4,7 +4,6 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send, X } from "lucide-react"
-import { sendToWebhook } from "@/lib/webhook"
 
 interface ReportSectionProps {
   website1: string
@@ -66,16 +65,6 @@ export function ReportSection({ website1, website2, onRerun }: ReportSectionProp
       ...prev,
       [index]: { ...getFeedback(index), rating },
     }))
-    
-    // Send feedback to webhook
-    sendToWebhook({
-      event: 'feedback_submitted',
-      timestamp: new Date().toISOString(),
-      website1,
-      website2,
-      dimension: dimensions[index].title,
-      rating,
-    }).catch(err => console.error('[v0] Failed to send feedback:', err))
   }
 
   const toggleChat = (index: number) => {
@@ -98,16 +87,6 @@ export function ReportSection({ website1, website2, onRerun }: ReportSectionProp
 
     const userMessage = currentFeedback.question
     const assistantResponse = `Thank you for your question about ${dimensions[index].title}. This insight is based on our analysis of current homepage layouts, promotional strategies, and feature implementations. Would you like me to elaborate on any specific finding?`
-
-    // Send question to webhook
-    sendToWebhook({
-      event: 'user_question',
-      timestamp: new Date().toISOString(),
-      website1,
-      website2,
-      dimension: dimensions[index].title,
-      question: userMessage,
-    }).catch(err => console.error('[v0] Failed to send question:', err))
 
     setFeedback((prev) => ({
       ...prev,

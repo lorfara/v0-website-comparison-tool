@@ -1,10 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send } from "lucide-react"
 import { type WebhookResponseData } from "@/lib/webhook"
+
+declare global {
+  interface Window {
+    html2canvas: (element: HTMLElement, options?: object) => Promise<HTMLCanvasElement>
+    jspdf: { jsPDF: new (orientation?: string, unit?: string, format?: string | number[]) => {
+      internal: { pageSize: { getWidth: () => number; getHeight: () => number } }
+      addImage: (data: string, format: string, x: number, y: number, width: number, height: number) => void
+      addPage: () => void
+      save: (filename: string) => void
+    }}
+  }
+}
 
 type TabId = "executive" | "full"
 
@@ -25,6 +37,32 @@ interface FeedbackState {
 export function ReportSection({ website1, website2, onRerun, webhookData }: ReportSectionProps) {
   const [activeTab, setActiveTab] = useState<TabId>("executive")
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
+  const [scriptsLoaded, setScriptsLoaded] = useState(false)
+  const executiveRef = useRef<HTMLDivElement>(null)
+  const fullReportRef = useRef<HTMLDivElement>(null)
+
+  // Load html2canvas and jsPDF from CDN
+  useEffect(() => {
+    const loadScript = (src: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) {
+          resolve()
+          return
+        }
+        const script = document.createElement("script")
+        script.src = src
+        script.onload = () => resolve()
+        script.onerror = reject
+        document.head.appendChild(script)
+      })
+    }
+
+    Promise.all([
+      loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
+      loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
+    ]).then(() => setScriptsLoaded(true))
+  }, [])
 
   // Data mappings based on webhook structure
   const executiveHomepage = webhookData?.executive_summary?.homepage ?? ["coming soon", "coming soon", "coming soon"]
@@ -47,236 +85,73 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
   }
 
-  const handlePrintExecutive = () => {
-    const printWindow = window.open("", "_blank")
-    if (!printWindow) return
+  const generatePdf = async (element: HTMLElement, filename: string) => {
+    if (!scriptsLoaded || !window.html2canvas || !window.jspdf) {
+      alert("PDF libraries are still loading. Please try again.")
+      return
+    }
 
-    const content = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Website Competitive Analysis - Executive Summary</title>
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: Georgia, serif; line-height: 1.6; color: #1a1a1a; }
-            .container { max-width: 8.5in; margin: 0 auto; padding: 1in; }
-            h1 { font-size: 28px; margin-bottom: 8px; letter-spacing: 2px; }
-            .report-type { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; }
-            .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; border-bottom: 1px solid #ddd; padding-bottom: 16px; }
-            h2 { font-size: 18px; margin-top: 32px; margin-bottom: 16px; letter-spacing: 1px; }
-            ul { margin-left: 20px; margin-bottom: 16px; }
-            li { margin-bottom: 8px; }
-            @media print { body { margin: 0; padding: 0; } .container { padding: 0.75in; } }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="report-type">Website Competitive Analysis</div>
-            <h1>Executive Summary</h1>
-            <div class="subtitle">${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2} • Generated ${webhookData?.generated || new Date().toLocaleDateString()}</div>
-            
-            <h2>Homepage Messaging & Visual Hierarchy</h2>
-            <ul>
-              ${executiveHomepage.map((f) => `<li>${f}</li>`).join("")}
-            </ul>
-            
-            <h2>Promotional Strategy & Offers</h2>
-            <ul>
-              ${executivePromotions.map((f) => `<li>${f}</li>`).join("")}
-            </ul>
-          </div>
-        </body>
-      </html>
-    `
-    
-    printWindow.document.write(content)
-    printWindow.document.close()
-    setTimeout(() => printWindow.print(), 250)
+    setIsGeneratingPdf(true)
+
+    try {
+      const canvas = await window.html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      })
+
+      const imgData = canvas.toDataURL("image/png")
+      const { jsPDF } = window.jspdf
+      const pdf = new jsPDF("p", "mm", "a4")
+
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight)
+      const imgX = (pdfWidth - imgWidth * ratio) / 2
+      const scaledHeight = imgHeight * ratio
+
+      // If content fits on one page
+      if (scaledHeight <= pdfHeight) {
+        pdf.addImage(imgData, "PNG", imgX, 0, imgWidth * ratio, scaledHeight)
+      } else {
+        // Multi-page support
+        let heightLeft = scaledHeight
+        let position = 0
+        const pageHeight = pdfHeight
+
+        pdf.addImage(imgData, "PNG", imgX, position, imgWidth * ratio, scaledHeight)
+        heightLeft -= pageHeight
+
+        while (heightLeft > 0) {
+          position = -pageHeight * ((scaledHeight - heightLeft) / scaledHeight) * (scaledHeight / (imgWidth * ratio))
+          pdf.addPage()
+          pdf.addImage(imgData, "PNG", imgX, position, imgWidth * ratio, scaledHeight)
+          heightLeft -= pageHeight
+        }
+      }
+
+      pdf.save(filename)
+    } catch (error) {
+      console.error("PDF generation failed:", error)
+      alert("Failed to generate PDF. Please try again.")
+    } finally {
+      setIsGeneratingPdf(false)
+    }
   }
 
-  const handlePrintFull = () => {
-    const printWindow = window.open("", "_blank")
-    if (!printWindow) return
+  const handleDownloadExecutive = () => {
+    if (executiveRef.current) {
+      generatePdf(executiveRef.current, "competitive-intelligence-report.pdf")
+    }
+  }
 
-    const companyA = webhookData?.company_a || website1
-    const companyB = webhookData?.company_b || website2
-    const hasAppendix = appendix && appendix.length > 0
-    const hasKeyInsight = coreDynamic && coreDynamic !== "coming soon"
-
-    const content = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Website Competitive Analysis - Full Report</title>
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font-family: Georgia, serif; line-height: 1.6; color: #1a1a1a; }
-            .container { max-width: 8.5in; margin: 0 auto; padding: 1in; }
-
-            /* Cover */
-            .cover { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; page-break-after: always; }
-            .cover .report-type { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
-            .cover h1 { font-size: 32px; letter-spacing: 3px; margin-bottom: 12px; }
-            .cover .subtitle { color: #555; font-size: 15px; margin-bottom: 48px; padding-bottom: 24px; border-bottom: 1px solid #ddd; }
-            .cover .meta { font-size: 13px; color: #888; }
-
-            /* Table of Contents */
-            .toc { page-break-after: always; }
-            .toc h2 { font-size: 20px; letter-spacing: 2px; margin-bottom: 32px; padding-bottom: 12px; border-bottom: 1px solid #ddd; }
-            .toc-item { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px dotted #ddd; font-size: 14px; }
-            .toc-item .toc-title { color: #1a1a1a; }
-            .toc-item .toc-page { color: #888; font-size: 12px; }
-            .toc-sub { padding: 4px 0 4px 20px; font-size: 12px; color: #666; border-bottom: 1px dotted #eee; display: flex; justify-content: space-between; }
-
-            /* Executive Summary Section */
-            .exec-summary { page-break-after: always; }
-            .exec-summary h2 { font-size: 18px; margin-bottom: 16px; }
-            .exec-summary ul { margin-left: 20px; margin-bottom: 16px; }
-            .exec-summary li { margin-bottom: 8px; font-size: 14px; }
-
-            /* Sections */
-            .page { page-break-before: always; }
-            h2 { font-size: 20px; margin-top: 0; margin-bottom: 24px; letter-spacing: 1px; padding-bottom: 12px; border-bottom: 1px solid #ddd; page-break-after: avoid; }
-            h3 { font-size: 11px; font-weight: 700; margin-top: 24px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; color: #333; }
-            p { margin-bottom: 10px; font-size: 14px; }
-            strong { color: #1a1a1a; font-weight: 600; }
-            .section { margin-bottom: 28px; page-break-inside: avoid; padding-bottom: 28px; border-bottom: 1px solid #eee; }
-            .section:last-child { border-bottom: none; }
-            .key-insight { background: #f5f0eb; padding: 20px 24px; margin: 32px 0; border-left: 3px solid #1a1a1a; }
-            ul { margin-left: 20px; margin-bottom: 16px; }
-            li { margin-bottom: 8px; font-size: 14px; }
-
-            /* Page numbers */
-            @page { margin: 0.75in; @bottom-center { content: counter(page); font-family: Georgia, serif; font-size: 11px; color: #888; } }
-            @media print {
-              body { margin: 0; }
-              .container { padding: 0; }
-              .cover { page-break-after: always; }
-              .toc { page-break-after: always; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-
-            <!-- Cover Page -->
-            <div class="cover">
-              <div class="report-type">Website Competitive Analysis</div>
-              <h1>Full Report</h1>
-              <div class="subtitle">${companyA} vs ${companyB}</div>
-              <div class="meta">Generated ${webhookData?.generated || new Date().toLocaleDateString()}</div>
-            </div>
-
-            <!-- Table of Contents -->
-            <div class="toc">
-              <h2>Table of Contents</h2>
-              <div class="toc-item"><span class="toc-title">Executive Summary</span><span class="toc-page">2</span></div>
-              <div class="toc-item"><span class="toc-title">1. Homepage Messaging & Visual Hierarchy</span><span class="toc-page">4</span></div>
-              <div class="toc-sub"><span>Hero Message</span><span>4</span></div>
-              <div class="toc-sub"><span>Visual Hierarchy</span><span>4</span></div>
-              <div class="toc-sub"><span>Brand Voice</span><span>4</span></div>
-              <div class="toc-sub"><span>Call-to-Action</span><span>4</span></div>
-              <div class="toc-item"><span class="toc-title">2. Promotional Strategy & Offers</span><span class="toc-page">5</span></div>
-              <div class="toc-sub"><span>Active Promotions</span><span>5</span></div>
-              <div class="toc-sub"><span>Promotional Placement</span><span>5</span></div>
-              <div class="toc-sub"><span>Urgency Mechanics</span><span>5</span></div>
-              <div class="toc-sub"><span>Target Audience</span><span>5</span></div>
-              <div class="toc-item"><span class="toc-title">3. Product Discovery Experience</span><span class="toc-page">6</span></div>
-              <div class="toc-item"><span class="toc-title">4. AI-Powered Features</span><span class="toc-page">6</span></div>
-              ${hasKeyInsight ? `<div class="toc-item"><span class="toc-title">Key Insight</span><span class="toc-page">7</span></div>` : ""}
-              ${hasAppendix ? `<div class="toc-item"><span class="toc-title">Appendix</span><span class="toc-page">7</span></div>` : ""}
-            </div>
-
-            <!-- Executive Summary -->
-            <div class="exec-summary">
-              <h2>Executive Summary</h2>
-              <h3>Homepage Messaging & Visual Hierarchy</h3>
-              <ul>
-                ${executiveHomepage.map((f) => `<li>${f}</li>`).join("")}
-              </ul>
-              <h3>Promotional Strategy & Offers</h3>
-              <ul>
-                ${executivePromotions.map((f) => `<li>${f}</li>`).join("")}
-              </ul>
-            </div>
-
-            <!-- Section 1: Homepage -->
-            <div class="page">
-              <h2>1. Homepage Messaging & Visual Hierarchy</h2>
-              <div class="section">
-                <h3>Hero Message</h3>
-                <p><strong>${companyA}:</strong> ${fullHomeHero?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullHomeHero?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullHomeHero?.advantage || "coming soon"}</p>
-              </div>
-              <div class="section">
-                <h3>Visual Hierarchy</h3>
-                <p><strong>${companyA}:</strong> ${fullHomeVisual?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullHomeVisual?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullHomeVisual?.advantage || "coming soon"}</p>
-              </div>
-              <div class="section">
-                <h3>Brand Voice</h3>
-                <p><strong>${companyA}:</strong> ${fullHomeBrand?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullHomeBrand?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullHomeBrand?.advantage || "coming soon"}</p>
-              </div>
-              <div class="section">
-                <h3>Call-to-Action</h3>
-                <p><strong>${companyA}:</strong> ${fullHomeCTA?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullHomeCTA?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullHomeCTA?.advantage || "coming soon"}</p>
-              </div>
-            </div>
-
-            <!-- Section 2: Promotions -->
-            <div class="page">
-              <h2>2. Promotional Strategy & Offers</h2>
-              <div class="section">
-                <h3>Active Promotions</h3>
-                <p><strong>${companyA}:</strong> ${fullPromoActive?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullPromoActive?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullPromoActive?.advantage || "coming soon"}</p>
-              </div>
-              <div class="section">
-                <h3>Promotional Placement</h3>
-                <p><strong>${companyA}:</strong> ${fullPromoPlacement?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullPromoPlacement?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullPromoPlacement?.advantage || "coming soon"}</p>
-              </div>
-              <div class="section">
-                <h3>Urgency Mechanics</h3>
-                <p><strong>${companyA}:</strong> ${fullPromoUrgency?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullPromoUrgency?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullPromoUrgency?.advantage || "coming soon"}</p>
-              </div>
-              <div class="section">
-                <h3>Target Audience</h3>
-                <p><strong>${companyA}:</strong> ${fullPromoAudience?.company_a || "coming soon"}</p>
-                <p><strong>${companyB}:</strong> ${fullPromoAudience?.company_b || "coming soon"}</p>
-                <p><strong>Advantage:</strong> ${fullPromoAudience?.advantage || "coming soon"}</p>
-              </div>
-            </div>
-
-            <!-- Section 3 & 4: Phase 2 -->
-            <div class="page">
-              <h2>3. Product Discovery Experience</h2>
-              <p style="color:#888;">Coming soon — this dimension will be available in Phase 2.</p>
-              <h2 style="margin-top: 48px;">4. AI-Powered Features</h2>
-              <p style="color:#888;">Coming soon — this dimension will be available in Phase 2.</p>
-            </div>
-
-            ${hasKeyInsight ? `<div class="page"><div class="key-insight"><strong>Key Insight:</strong> ${coreDynamic}</div></div>` : ""}
-            ${hasAppendix ? `<div class="page"><h2>Appendix</h2><ul>${appendix.map((item) => `<li>${item}</li>`).join("")}</ul></div>` : ""}
-
-          </div>
-        </body>
-      </html>
-    `
-
-    printWindow.document.write(content)
-    printWindow.document.close()
-    setTimeout(() => printWindow.print(), 250)
+  const handleDownloadFull = () => {
+    if (fullReportRef.current) {
+      generatePdf(fullReportRef.current, "competitive-intelligence-report.pdf")
+    }
   }
 
   const tabs: { id: TabId; label: string }[] = [
@@ -306,21 +181,23 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
         <div className="pb-3">
           {activeTab === "executive" ? (
             <Button
-              onClick={handlePrintExecutive}
+              onClick={handleDownloadExecutive}
+              disabled={isGeneratingPdf || !scriptsLoaded}
               variant="outline"
               className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
             >
               <Download className="h-4 w-4" />
-              Download as PDF
+              {isGeneratingPdf ? "Generating..." : "Download as PDF"}
             </Button>
           ) : (
             <Button
-              onClick={handlePrintFull}
+              onClick={handleDownloadFull}
+              disabled={isGeneratingPdf || !scriptsLoaded}
               variant="outline"
               className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
             >
               <Download className="h-4 w-4" />
-              Download as PDF
+              {isGeneratingPdf ? "Generating..." : "Download as PDF"}
             </Button>
           )}
         </div>
@@ -328,7 +205,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       {/* Executive Summary Tab */}
       {activeTab === "executive" && (
-        <div className="divide-y divide-border">
+        <div ref={executiveRef} className="divide-y divide-border bg-white">
           {/* Homepage Section */}
           <div className="px-8 py-8">
             <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
@@ -389,7 +266,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       {/* Full Report Tab */}
       {activeTab === "full" && (
-        <div className="divide-y divide-border">
+        <div ref={fullReportRef} className="divide-y divide-border bg-white">
 
           {/* Table of Contents */}
           <div className="px-8 py-8 bg-secondary/40">

@@ -26,6 +26,12 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   const [activeTab, setActiveTab] = useState<TabId>("executive")
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
 
+  // Debug: Log the full webhook response to see structure
+  console.log("[v0] webhookData:", JSON.stringify(webhookData, null, 2))
+  console.log("[v0] executive_summary:", webhookData?.executive_summary)
+  console.log("[v0] executive_summary.homepage:", webhookData?.executive_summary?.homepage)
+  console.log("[v0] executive_summary.promotions:", webhookData?.executive_summary?.promotions)
+
   // Data mappings based on webhook structure
   const executiveHomepage = webhookData?.executive_summary?.homepage ?? ["coming soon", "coming soon", "coming soon"]
   const executivePromotions = webhookData?.executive_summary?.promotions ?? ["coming soon", "coming soon", "coming soon"]

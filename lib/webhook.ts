@@ -25,7 +25,23 @@ export async function sendToWebhook(data: object): Promise<WebhookResponseData |
       return null
     }
 
-    return response.json() as Promise<WebhookResponseData>
+    // Get the raw text first to handle empty or invalid JSON responses
+    const text = await response.text()
+    console.log('[v0] Webhook raw response:', text)
+
+    if (!text || text.trim() === '') {
+      console.log('[v0] Webhook returned empty response')
+      return null
+    }
+
+    try {
+      const parsed = JSON.parse(text) as WebhookResponseData
+      console.log('[v0] Webhook parsed response:', JSON.stringify(parsed, null, 2))
+      return parsed
+    } catch (parseError) {
+      console.error('[v0] Failed to parse webhook response as JSON:', parseError)
+      return null
+    }
   } catch (error) {
     console.error('[v0] Failed to send to webhook:', error)
     return null

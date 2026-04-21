@@ -47,90 +47,143 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
   }
 
-  const triggerDownload = (content: string, filename: string) => {
-    const blob = new Blob([content], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = filename
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+  const handlePrintExecutive = () => {
+    const printWindow = window.open("", "_blank")
+    if (!printWindow) return
+
+    const content = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Executive Summary - ${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Georgia, serif; line-height: 1.6; color: #1a1a1a; }
+            .container { max-width: 8.5in; margin: 0 auto; padding: 1in; }
+            h1 { font-size: 28px; margin-bottom: 8px; letter-spacing: 2px; }
+            .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; border-bottom: 1px solid #ddd; padding-bottom: 16px; }
+            h2 { font-size: 18px; margin-top: 32px; margin-bottom: 16px; letter-spacing: 1px; }
+            ul { margin-left: 20px; margin-bottom: 16px; }
+            li { margin-bottom: 8px; }
+            @media print { body { margin: 0; padding: 0; } .container { padding: 0.75in; } }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Executive Summary</h1>
+            <div class="subtitle">${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2} • Generated ${webhookData?.generated || new Date().toLocaleDateString()}</div>
+            
+            <h2>Homepage Messaging & Visual Hierarchy</h2>
+            <ul>
+              ${executiveHomepage.map((f) => `<li>${f}</li>`).join("")}
+            </ul>
+            
+            <h2>Promotional Strategy & Offers</h2>
+            <ul>
+              ${executivePromotions.map((f) => `<li>${f}</li>`).join("")}
+            </ul>
+          </div>
+        </body>
+      </html>
+    `
+    
+    printWindow.document.write(content)
+    printWindow.document.close()
+    setTimeout(() => printWindow.print(), 250)
   }
 
-  const handleDownloadExecutive = () => {
+  const handlePrintFull = () => {
+    const printWindow = window.open("", "_blank")
+    if (!printWindow) return
+
     const content = `
-EXECUTIVE SUMMARY
-=================
-${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2}
-Generated: ${webhookData?.generated || new Date().toLocaleDateString()}
-
-HOMEPAGE MESSAGING & VISUAL HIERARCHY
-${executiveHomepage.map((f) => `• ${f}`).join("\n")}
-
-PROMOTIONAL STRATEGY & OFFERS
-${executivePromotions.map((f) => `• ${f}`).join("\n")}
-    `.trim()
-    triggerDownload(content, `executive-summary-${website1}-vs-${website2}.txt`)
-  }
-
-  const handleDownloadFull = () => {
-    const content = `
-FULL COMPETITIVE ANALYSIS REPORT
-=================================
-${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2}
-Generated: ${webhookData?.generated || new Date().toLocaleDateString()}
-
-HOMEPAGE MESSAGING & VISUAL HIERARCHY
-
-Hero Message
-${webhookData?.company_a || website1}: ${fullHomeHero?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullHomeHero?.company_b || "coming soon"}
-Advantage: ${fullHomeHero?.advantage || "coming soon"}
-
-Visual Hierarchy
-${webhookData?.company_a || website1}: ${fullHomeVisual?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullHomeVisual?.company_b || "coming soon"}
-Advantage: ${fullHomeVisual?.advantage || "coming soon"}
-
-Brand Voice
-${webhookData?.company_a || website1}: ${fullHomeBrand?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullHomeBrand?.company_b || "coming soon"}
-Advantage: ${fullHomeBrand?.advantage || "coming soon"}
-
-Call-to-Action
-${webhookData?.company_a || website1}: ${fullHomeCTA?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullHomeCTA?.company_b || "coming soon"}
-Advantage: ${fullHomeCTA?.advantage || "coming soon"}
-
-PROMOTIONAL STRATEGY & OFFERS
-
-Active Promotions
-${webhookData?.company_a || website1}: ${fullPromoActive?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullPromoActive?.company_b || "coming soon"}
-Advantage: ${fullPromoActive?.advantage || "coming soon"}
-
-Promotional Placement
-${webhookData?.company_a || website1}: ${fullPromoPlacement?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullPromoPlacement?.company_b || "coming soon"}
-Advantage: ${fullPromoPlacement?.advantage || "coming soon"}
-
-Urgency Mechanics
-${webhookData?.company_a || website1}: ${fullPromoUrgency?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullPromoUrgency?.company_b || "coming soon"}
-Advantage: ${fullPromoUrgency?.advantage || "coming soon"}
-
-Target Audience
-${webhookData?.company_a || website1}: ${fullPromoAudience?.company_a || "coming soon"}
-${webhookData?.company_b || website2}: ${fullPromoAudience?.company_b || "coming soon"}
-Advantage: ${fullPromoAudience?.advantage || "coming soon"}
-
-${coreDynamic && coreDynamic !== "coming soon" ? `KEY INSIGHT\n${coreDynamic}\n` : ""}
-
-${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${item}`).join("\n")}` : ""}
-    `.trim()
-    triggerDownload(content, `full-report-${website1}-vs-${website2}.txt`)
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Full Report - ${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: Georgia, serif; line-height: 1.6; color: #1a1a1a; }
+            .container { max-width: 8.5in; margin: 0 auto; padding: 1in; }
+            h1 { font-size: 28px; margin-bottom: 8px; letter-spacing: 2px; }
+            .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; border-bottom: 1px solid #ddd; padding-bottom: 16px; }
+            h2 { font-size: 18px; margin-top: 32px; margin-bottom: 20px; letter-spacing: 1px; page-break-after: avoid; }
+            h3 { font-size: 12px; font-weight: 600; margin-top: 20px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+            p { margin-bottom: 12px; }
+            strong { color: #1a1a1a; font-weight: 600; }
+            .section { margin-bottom: 24px; page-break-inside: avoid; }
+            .key-insight { background: #f5f0eb; padding: 16px; margin: 32px 0; border-left: 4px solid #1a1a1a; }
+            @media print { body { margin: 0; padding: 0; } .container { padding: 0.75in; } h2 { page-break-before: avoid; } }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Full Competitive Analysis Report</h1>
+            <div class="subtitle">${webhookData?.company_a || website1} vs ${webhookData?.company_b || website2} • Generated ${webhookData?.generated || new Date().toLocaleDateString()}</div>
+            
+            <h2>Homepage Messaging & Visual Hierarchy</h2>
+            <div class="section">
+              <h3>Hero Message</h3>
+              <p><strong>${website1}:</strong> ${fullHomeHero?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullHomeHero?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullHomeHero?.advantage || "coming soon"}</p>
+            </div>
+            <div class="section">
+              <h3>Visual Hierarchy</h3>
+              <p><strong>${website1}:</strong> ${fullHomeVisual?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullHomeVisual?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullHomeVisual?.advantage || "coming soon"}</p>
+            </div>
+            <div class="section">
+              <h3>Brand Voice</h3>
+              <p><strong>${website1}:</strong> ${fullHomeBrand?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullHomeBrand?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullHomeBrand?.advantage || "coming soon"}</p>
+            </div>
+            <div class="section">
+              <h3>Call-to-Action</h3>
+              <p><strong>${website1}:</strong> ${fullHomeCTA?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullHomeCTA?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullHomeCTA?.advantage || "coming soon"}</p>
+            </div>
+            
+            <h2>Promotional Strategy & Offers</h2>
+            <div class="section">
+              <h3>Active Promotions</h3>
+              <p><strong>${website1}:</strong> ${fullPromoActive?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullPromoActive?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullPromoActive?.advantage || "coming soon"}</p>
+            </div>
+            <div class="section">
+              <h3>Promotional Placement</h3>
+              <p><strong>${website1}:</strong> ${fullPromoPlacement?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullPromoPlacement?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullPromoPlacement?.advantage || "coming soon"}</p>
+            </div>
+            <div class="section">
+              <h3>Urgency Mechanics</h3>
+              <p><strong>${website1}:</strong> ${fullPromoUrgency?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullPromoUrgency?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullPromoUrgency?.advantage || "coming soon"}</p>
+            </div>
+            <div class="section">
+              <h3>Target Audience</h3>
+              <p><strong>${website1}:</strong> ${fullPromoAudience?.company_a || "coming soon"}</p>
+              <p><strong>${website2}:</strong> ${fullPromoAudience?.company_b || "coming soon"}</p>
+              <p><strong>Advantage:</strong> ${fullPromoAudience?.advantage || "coming soon"}</p>
+            </div>
+            
+            ${coreDynamic && coreDynamic !== "coming soon" ? `<div class="key-insight"><strong>Key Insight:</strong> ${coreDynamic}</div>` : ""}
+            
+            ${appendix && appendix.length > 0 ? `<h2>Appendix</h2><ul>${appendix.map((item) => `<li>${item}</li>`).join("")}</ul>` : ""}
+          </div>
+        </body>
+      </html>
+    `
+    
+    printWindow.document.write(content)
+    printWindow.document.close()
+    setTimeout(() => printWindow.print(), 250)
   }
 
   const tabs: { id: TabId; label: string }[] = [
@@ -160,21 +213,21 @@ ${appendix && appendix.length > 0 ? `APPENDIX\n${appendix.map((item) => `• ${i
         <div className="pb-3">
           {activeTab === "executive" ? (
             <Button
-              onClick={handleDownloadExecutive}
+              onClick={handlePrintExecutive}
               variant="outline"
               className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
             >
               <Download className="h-4 w-4" />
-              Download Summary
+              Download as PDF
             </Button>
           ) : (
             <Button
-              onClick={handleDownloadFull}
+              onClick={handlePrintFull}
               variant="outline"
               className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
             >
               <Download className="h-4 w-4" />
-              Download Full Report
+              Download as PDF
             </Button>
           )}
         </div>

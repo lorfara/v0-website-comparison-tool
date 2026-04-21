@@ -287,16 +287,16 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   return (
     <div className="bg-card">
       {/* Tab Bar */}
-      <div className="flex items-end justify-between border-b border-border px-8 pt-8 pb-0">
-        <div className="flex gap-0">
+      <div className="flex items-end justify-between border-b border-border px-8 pt-6 pb-0">
+        <div className="flex gap-1">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-4 font-serif text-sm tracking-wide transition-colors duration-150 ${
+              className={`px-6 py-3 font-serif text-sm tracking-wide transition-all duration-150 ${
                 activeTab === tab.id
-                  ? "border-b-2 border-foreground text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-foreground text-background"
+                  : "bg-secondary text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               {tab.label}

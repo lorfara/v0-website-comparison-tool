@@ -3,7 +3,9 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send, X } from "lucide-react"
+import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send } from "lucide-react"
+
+type TabId = "executive" | "full"
 
 interface WebhookResponse {
   homepageMessaging?: {
@@ -35,6 +37,7 @@ interface FeedbackState {
 }
 
 export function ReportSection({ website1, website2, onRerun, webhookData }: ReportSectionProps) {
+  const [activeTab, setActiveTab] = useState<TabId>("executive")
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
 
   const defaultFindings = {
@@ -125,10 +128,36 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     }))
   }
 
-  const handleDownload = () => {
-    const reportContent = `
-COMPETITIVE ANALYSIS REPORT
-===========================
+  const triggerDownload = (content: string, filename: string) => {
+    const blob = new Blob([content], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleDownloadExecutive = () => {
+    const content = `
+EXECUTIVE SUMMARY
+=================
+${website1} vs ${website2}
+Generated: ${new Date().toLocaleDateString()}
+
+${dimensions
+  .map((dim) => `${dim.title.toUpperCase()}\n${dim.findings[0]}`)
+  .join("\n\n")}
+    `.trim()
+    triggerDownload(content, `executive-summary-${website1}-vs-${website2}.txt`)
+  }
+
+  const handleDownloadFull = () => {
+    const content = `
+FULL COMPETITIVE ANALYSIS REPORT
+=================================
 ${website1} vs ${website2}
 Generated: ${new Date().toLocaleDateString()}
 
@@ -142,34 +171,74 @@ ${dim.findings.map((f) => `• ${f}`).join("\n")}
   )
   .join("\n")}
     `.trim()
-
-    const blob = new Blob([reportContent], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `competitive-analysis-${website1}-vs-${website2}.txt`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
+    triggerDownload(content, `full-report-${website1}-vs-${website2}.txt`)
   }
+
+  const tabs: { id: TabId; label: string }[] = [
+    { id: "executive", label: "Executive Summary" },
+    { id: "full", label: "Full Report" },
+  ]
 
   return (
     <div className="border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-8 py-6">
-        <h3 className="font-serif text-xl tracking-wide text-foreground">
-          Analysis Report
-        </h3>
-        <Button
-          onClick={handleDownload}
-          variant="outline"
-          className="flex items-center gap-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
-        >
-          <Download className="h-4 w-4" />
-          Download Report
-        </Button>
+      {/* Tab Bar */}
+      <div className="flex items-end justify-between border-b border-border px-8 pt-6">
+        <div className="flex gap-0">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-6 py-3 text-sm tracking-wide transition-colors duration-150 ${
+                activeTab === tab.id
+                  ? "border-b-2 border-foreground font-semibold text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="pb-3">
+          {activeTab === "executive" ? (
+            <Button
+              onClick={handleDownloadExecutive}
+              variant="outline"
+              className="flex items-center gap-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
+            >
+              <Download className="h-4 w-4" />
+              Download Summary
+            </Button>
+          ) : (
+            <Button
+              onClick={handleDownloadFull}
+              variant="outline"
+              className="flex items-center gap-2 border-foreground text-foreground hover:bg-foreground hover:text-background"
+            >
+              <Download className="h-4 w-4" />
+              Download Full Report
+            </Button>
+          )}
+        </div>
       </div>
 
+      {/* Executive Summary Tab */}
+      {activeTab === "executive" && (
+        <div className="divide-y divide-border">
+          {dimensions.map((dimension, index) => (
+            <div key={index} className="px-8 py-6">
+              <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-foreground">
+                {dimension.title}
+              </h4>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {dimension.findings[0]}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Full Report Tab */}
+      {activeTab === "full" && (
       <div className="divide-y divide-border">
         {dimensions.map((dimension, index) => {
           const sectionFeedback = getFeedback(index)
@@ -288,6 +357,7 @@ ${dim.findings.map((f) => `• ${f}`).join("\n")}
           )
         })}
       </div>
+      )}
 
       <div className="border-t border-border bg-secondary px-8 py-6">
         <p className="mb-4 text-center text-xs text-muted-foreground">

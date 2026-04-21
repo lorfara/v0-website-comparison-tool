@@ -4,7 +4,8 @@ import { useState, useRef } from "react"
 import { Header } from "@/components/header"
 import { CompetitorForm } from "@/components/competitor-form"
 import { ReportSection } from "@/components/report-section"
-import { sendToWebhook, type WebhookResponseData } from "@/lib/webhook"
+import { sendToWebhook } from "@/lib/webhook"
+import type { WebhookResponseData } from "@/lib/webhook-types"
 
 export default function Home() {
   const [website1, setWebsite1] = useState("CB2.com")
@@ -28,14 +29,22 @@ export default function Home() {
   }
 
   const handleAnalyze = async () => {
-    console.log('[v0] Analysis started for:', website1, 'vs', website2)
+    console.log('[v0] handleAnalyze called, current isAnalyzing:', isAnalyzing)
+    
+    // Prevent multiple simultaneous calls
+    if (isAnalyzing) {
+      console.log('[v0] Already analyzing, ignoring call')
+      return
+    }
+    
+    console.log('[v0] Starting analysis...')
     setIsAnalyzing(true)
     setWebhookData(null)
     setReportGenerated(false)
     abortControllerRef.current = new AbortController()
 
     try {
-      console.log('[v0] Sending webhook request...')
+      console.log('[v0] Calling webhook...')
       const response = await sendToWebhook({
         event: 'analysis_started',
         timestamp: new Date().toISOString(),
@@ -43,19 +52,19 @@ export default function Home() {
         website2,
       })
 
-      if (abortControllerRef.current?.signal.aborted) {
-        console.log('[v0] Analysis was aborted')
-        return
-      }
+      console.log('[v0] Webhook returned, aborted:', abortControllerRef.current?.signal.aborted)
+      if (abortControllerRef.current?.signal.aborted) return
 
-      console.log('[v0] Webhook response received:', response)
+      console.log('[v0] Setting webhook data and reportGenerated')
       setWebhookData(response)
       setReportGenerated(true)
-      console.log('[v0] Analysis complete, report generated')
     } catch (error) {
       console.error('[v0] Analysis failed:', error)
     } finally {
-      setIsAnalyzing(false)
+      console.log('[v0] Finally block, setting isAnalyzing to false')
+      if (!abortControllerRef.current?.signal.aborted) {
+        setIsAnalyzing(false)
+      }
       abortControllerRef.current = null
     }
   }

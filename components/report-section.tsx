@@ -26,7 +26,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   const [activeTab, setActiveTab] = useState<TabId>("executive")
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
 
-  const FORTHCOMING = ["Forthcoming"]
+  const FORTHCOMING = ["coming soon"]
 
   const dimensions = [
     {

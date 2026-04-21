@@ -33,8 +33,8 @@ export default function Home() {
 
         <div className="mb-10">
           <p className="text-center text-muted-foreground leading-relaxed">
-            Enter two websites to compare across four dimensions: Product Assortment, 
-            Pricing Strategy, User Experience, and Brand Positioning.
+            Enter two websites to compare across four dimensions: Homepage Messaging & Visual Hierarchy, 
+            Promotional Placement & Offers, Product Discovery Experience, and AI-Powered Features.
           </p>
         </div>
 

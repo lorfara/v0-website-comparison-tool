@@ -11,35 +11,35 @@ interface ReportSectionProps {
 export function ReportSection({ website1, website2 }: ReportSectionProps) {
   const dimensions = [
     {
-      title: "Product Assortment",
+      title: "Homepage Messaging & Visual Hierarchy",
       findings: [
-        `${website1} offers a broader range of contemporary furniture styles`,
-        `${website2} focuses more on mid-century modern aesthetics`,
-        "Both sites feature seasonal collections with similar refresh cycles",
+        `${website1} leads with lifestyle imagery and aspirational messaging above the fold`,
+        `${website2} prioritizes product categories with a grid-based visual hierarchy`,
+        "Both sites use hero banners but differ in typography weight and spacing strategies",
       ],
     },
     {
-      title: "Pricing Strategy",
+      title: "Promotional Placement & Offers",
       findings: [
-        `${website1} positions products in the $200-$2,000 range`,
-        `${website2} has a slightly higher average price point`,
-        "Both utilize promotional pricing with similar discount structures",
+        `${website1} features a persistent promotional banner with rotating offers`,
+        `${website2} integrates promotional messaging within product cards`,
+        "Both utilize urgency-driven language but with different visual prominence levels",
       ],
     },
     {
-      title: "User Experience",
+      title: "Product Discovery Experience",
       findings: [
-        `${website1} features a more streamlined checkout process`,
-        `${website2} offers superior product visualization tools`,
-        "Mobile experience is comparable across both platforms",
+        `${website1} offers robust filtering with visual swatches and room-based navigation`,
+        `${website2} emphasizes search-first discovery with predictive suggestions`,
+        "Both sites feature curated collections but differ in personalization depth",
       ],
     },
     {
-      title: "Brand Positioning",
+      title: "AI-Powered Features",
       findings: [
-        `${website1} targets younger, urban demographics`,
-        `${website2} appeals to design-conscious homeowners`,
-        "Both emphasize sustainability in marketing messaging",
+        `${website1} implements AI-driven product recommendations on PDPs`,
+        `${website2} features visual search and style matching capabilities`,
+        "Both are exploring conversational AI but at different maturity levels",
       ],
     },
   ]

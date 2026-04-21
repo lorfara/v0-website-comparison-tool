@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
+import { sendToWebhook } from "@/lib/webhook"
 
 interface CompetitorFormProps {
   website1: string
@@ -20,6 +21,16 @@ export function CompetitorForm({
   onAnalyze,
   isAnalyzing,
 }: CompetitorFormProps) {
+  const handleAnalyzeClick = async () => {
+    // Send form submission to webhook
+    await sendToWebhook({
+      event: 'analysis_started',
+      timestamp: new Date().toISOString(),
+      website1,
+      website2,
+    })
+    onAnalyze()
+  }
   return (
     <div className="mb-12 border border-border bg-card p-8">
       <h3 className="mb-6 font-serif text-xl tracking-wide text-foreground">
@@ -58,7 +69,7 @@ export function CompetitorForm({
 
       <div className="flex justify-center">
         <Button
-          onClick={onAnalyze}
+          onClick={handleAnalyzeClick}
           disabled={isAnalyzing || !website1 || !website2}
           className="bg-foreground px-8 py-2 text-sm tracking-wide text-background hover:bg-foreground/90 disabled:opacity-50"
         >

@@ -29,12 +29,22 @@ export default function Home() {
   }
 
   const handleAnalyze = async () => {
+    console.log('[v0] handleAnalyze called, current isAnalyzing:', isAnalyzing)
+    
+    // Prevent multiple simultaneous calls
+    if (isAnalyzing) {
+      console.log('[v0] Already analyzing, ignoring call')
+      return
+    }
+    
+    console.log('[v0] Starting analysis...')
     setIsAnalyzing(true)
     setWebhookData(null)
     setReportGenerated(false)
     abortControllerRef.current = new AbortController()
 
     try {
+      console.log('[v0] Calling webhook...')
       const response = await sendToWebhook({
         event: 'analysis_started',
         timestamp: new Date().toISOString(),
@@ -42,13 +52,16 @@ export default function Home() {
         website2,
       })
 
+      console.log('[v0] Webhook returned, aborted:', abortControllerRef.current?.signal.aborted)
       if (abortControllerRef.current?.signal.aborted) return
 
+      console.log('[v0] Setting webhook data and reportGenerated')
       setWebhookData(response)
       setReportGenerated(true)
     } catch (error) {
       console.error('[v0] Analysis failed:', error)
     } finally {
+      console.log('[v0] Finally block, setting isAnalyzing to false')
       if (!abortControllerRef.current?.signal.aborted) {
         setIsAnalyzing(false)
       }

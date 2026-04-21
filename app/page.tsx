@@ -4,34 +4,67 @@ import { useState, useRef } from "react"
 import { Header } from "@/components/header"
 import { CompetitorForm } from "@/components/competitor-form"
 import { ReportSection } from "@/components/report-section"
+import { sendToWebhook } from "@/lib/webhook"
+
+export interface WebhookResponse {
+  homepageMessaging?: {
+    findings: string[]
+  }
+  promotionalStrategy?: {
+    findings: string[]
+  }
+  productDiscovery?: {
+    findings: string[]
+  }
+  aiFeatures?: {
+    findings: string[]
+  }
+}
 
 export default function Home() {
   const [website1, setWebsite1] = useState("CB2.com")
   const [website2, setWebsite2] = useState("WestElm.com")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [reportGenerated, setReportGenerated] = useState(false)
+  const [webhookData, setWebhookData] = useState<WebhookResponse | null>(null)
   const formRef = useRef<HTMLDivElement>(null)
-  const analysisTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   const handleRerun = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   const handleStop = () => {
-    if (analysisTimerRef.current) {
-      clearTimeout(analysisTimerRef.current)
-      analysisTimerRef.current = null
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
     }
     setIsAnalyzing(false)
   }
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     setIsAnalyzing(true)
-    analysisTimerRef.current = setTimeout(() => {
-      setIsAnalyzing(false)
+    setWebhookData(null)
+    abortControllerRef.current = new AbortController()
+
+    try {
+      const response = await sendToWebhook({
+        event: 'analysis_started',
+        timestamp: new Date().toISOString(),
+        website1,
+        website2,
+      })
+
+      if (abortControllerRef.current?.signal.aborted) return
+
+      setWebhookData(response)
       setReportGenerated(true)
-      analysisTimerRef.current = null
-    }, 2000)
+    } catch (error) {
+      console.error('[v0] Analysis failed:', error)
+    } finally {
+      setIsAnalyzing(false)
+      abortControllerRef.current = null
+    }
   }
 
   return (
@@ -48,7 +81,7 @@ export default function Home() {
         <div className="mb-10">
           <p className="text-center text-muted-foreground leading-relaxed">
             Enter two websites to compare across four dimensions: Homepage Messaging & Visual Hierarchy, 
-            Promotional Placement & Offers, Product Discovery Experience, and AI-Powered Features.
+            Promotional Strategy & Offers, Product Discovery Experience, and AI-Powered Features.
           </p>
         </div>
 
@@ -69,6 +102,7 @@ export default function Home() {
             website1={website1} 
             website2={website2}
             onRerun={handleRerun}
+            webhookData={webhookData}
           />
         )}
       </main>

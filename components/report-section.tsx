@@ -5,10 +5,26 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send, X } from "lucide-react"
 
+interface WebhookResponse {
+  homepageMessaging?: {
+    findings: string[]
+  }
+  promotionalStrategy?: {
+    findings: string[]
+  }
+  productDiscovery?: {
+    findings: string[]
+  }
+  aiFeatures?: {
+    findings: string[]
+  }
+}
+
 interface ReportSectionProps {
   website1: string
   website2: string
   onRerun: () => void
+  webhookData: WebhookResponse | null
 }
 
 interface FeedbackState {
@@ -18,41 +34,48 @@ interface FeedbackState {
   messages: { role: "user" | "assistant"; content: string }[]
 }
 
-export function ReportSection({ website1, website2, onRerun }: ReportSectionProps) {
+export function ReportSection({ website1, website2, onRerun, webhookData }: ReportSectionProps) {
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
+
+  const defaultFindings = {
+    homepageMessaging: [
+      `${website1} leads with lifestyle imagery and aspirational messaging above the fold`,
+      `${website2} prioritizes product categories with a grid-based visual hierarchy`,
+      "Both sites use hero banners but differ in typography weight and spacing strategies",
+    ],
+    promotionalStrategy: [
+      `${website1} features a persistent promotional banner with rotating offers`,
+      `${website2} integrates promotional messaging within product cards`,
+      "Both utilize urgency-driven language but with different visual prominence levels",
+    ],
+    productDiscovery: [
+      `${website1} offers robust filtering with visual swatches and room-based navigation`,
+      `${website2} emphasizes search-first discovery with predictive suggestions`,
+      "Both sites feature curated collections but differ in personalization depth",
+    ],
+    aiFeatures: [
+      `${website1} implements AI-driven product recommendations on PDPs`,
+      `${website2} features visual search and style matching capabilities`,
+      "Both are exploring conversational AI but at different maturity levels",
+    ],
+  }
 
   const dimensions = [
     {
       title: "Homepage Messaging & Visual Hierarchy",
-      findings: [
-        `${website1} leads with lifestyle imagery and aspirational messaging above the fold`,
-        `${website2} prioritizes product categories with a grid-based visual hierarchy`,
-        "Both sites use hero banners but differ in typography weight and spacing strategies",
-      ],
+      findings: webhookData?.homepageMessaging?.findings || defaultFindings.homepageMessaging,
     },
     {
-      title: "Promotional Placement & Offers",
-      findings: [
-        `${website1} features a persistent promotional banner with rotating offers`,
-        `${website2} integrates promotional messaging within product cards`,
-        "Both utilize urgency-driven language but with different visual prominence levels",
-      ],
+      title: "Promotional Strategy & Offers",
+      findings: webhookData?.promotionalStrategy?.findings || defaultFindings.promotionalStrategy,
     },
     {
       title: "Product Discovery Experience",
-      findings: [
-        `${website1} offers robust filtering with visual swatches and room-based navigation`,
-        `${website2} emphasizes search-first discovery with predictive suggestions`,
-        "Both sites feature curated collections but differ in personalization depth",
-      ],
+      findings: webhookData?.productDiscovery?.findings || defaultFindings.productDiscovery,
     },
     {
       title: "AI-Powered Features",
-      findings: [
-        `${website1} implements AI-driven product recommendations on PDPs`,
-        `${website2} features visual search and style matching capabilities`,
-        "Both are exploring conversational AI but at different maturity levels",
-      ],
+      findings: webhookData?.aiFeatures?.findings || defaultFindings.aiFeatures,
     },
   ]
 

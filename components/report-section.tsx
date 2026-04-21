@@ -47,20 +47,13 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     const loadScript = (src: string): Promise<void> => {
       return new Promise((resolve, reject) => {
         if (document.querySelector(`script[src="${src}"]`)) {
-          console.log("[v0] Script already loaded:", src)
           resolve()
           return
         }
         const script = document.createElement("script")
         script.src = src
-        script.onload = () => {
-          console.log("[v0] Script loaded successfully:", src)
-          resolve()
-        }
-        script.onerror = (e) => {
-          console.error("[v0] Script failed to load:", src, e)
-          reject(e)
-        }
+        script.onload = () => resolve()
+        script.onerror = reject
         document.head.appendChild(script)
       })
     }
@@ -69,9 +62,6 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
       loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
       loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
     ]).then(() => {
-      console.log("[v0] All scripts loaded, checking globals...")
-      console.log("[v0] window.html2canvas:", typeof window.html2canvas)
-      console.log("[v0] window.jspdf:", typeof window.jspdf)
       setScriptsLoaded(true)
     }).catch((err) => {
       console.error("[v0] Failed to load PDF scripts:", err)
@@ -110,14 +100,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   }
 
   const generatePdf = async (element: HTMLElement, filename: string) => {
-    console.log("[v0] generatePdf called")
-    console.log("[v0] scriptsLoaded:", scriptsLoaded)
-    console.log("[v0] window.html2canvas:", typeof window.html2canvas)
-    console.log("[v0] window.jspdf:", typeof window.jspdf)
-    console.log("[v0] element:", element)
-
     if (!scriptsLoaded || !window.html2canvas || !window.jspdf) {
-      console.error("[v0] PDF libraries not ready")
       alert("PDF libraries are still loading. Please try again.")
       return
     }
@@ -125,22 +108,16 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     setIsGeneratingPdf(true)
 
     try {
-      console.log("[v0] Calling html2canvas...")
       const canvas = await window.html2canvas(element, {
         scale: 2,
         useCORS: true,
-        logging: true,
+        logging: false,
         backgroundColor: "#ffffff",
       })
-      console.log("[v0] html2canvas returned canvas:", canvas.width, "x", canvas.height)
 
       const imgData = canvas.toDataURL("image/png")
-      console.log("[v0] Image data generated, length:", imgData.length)
-      
-      console.log("[v0] Creating jsPDF instance...")
       const { jsPDF } = window.jspdf
       const pdf = new jsPDF("p", "mm", "a4")
-      console.log("[v0] jsPDF instance created")
 
       const pdfWidth = pdf.internal.pageSize.getWidth()
       const pdfHeight = pdf.internal.pageSize.getHeight()
@@ -170,9 +147,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
         }
       }
 
-      console.log("[v0] Saving PDF as:", filename)
       pdf.save(filename)
-      console.log("[v0] PDF save called successfully")
     } catch (error) {
       console.error("[v0] PDF generation failed:", error)
       alert("Failed to generate PDF. Please try again.")
@@ -182,22 +157,14 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   }
 
   const handleDownloadExecutive = () => {
-    console.log("[v0] handleDownloadExecutive clicked")
-    console.log("[v0] executiveRef.current:", executiveRef.current)
     if (executiveRef.current) {
       generatePdf(executiveRef.current, "competitive-intelligence-report.pdf")
-    } else {
-      console.error("[v0] executiveRef.current is null!")
     }
   }
 
   const handleDownloadFull = () => {
-    console.log("[v0] handleDownloadFull clicked")
-    console.log("[v0] fullReportRef.current:", fullReportRef.current)
     if (fullReportRef.current) {
       generatePdf(fullReportRef.current, "competitive-intelligence-report.pdf")
-    } else {
-      console.error("[v0] fullReportRef.current is null!")
     }
   }
 

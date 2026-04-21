@@ -1,0 +1,377 @@
+{
+  "name": "WSonoma Competitive Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        288
+      ],
+      "id": "7bcc759f-ef8b-4c5c-b1ad-dd1064065fb8",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "ebyLH15cC5xTGYqe",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cfaab260-e02b-46d6-9113-3f27b7ad5442",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        -128
+      ],
+      "id": "386c13a5-14bb-4b13-92e2-2079b7724210",
+      "name": "Webhook",
+      "webhookId": "cfaab260-e02b-46d6-9113-3f27b7ad5442"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1280,
+        -128
+      ],
+      "id": "e0d9c1ad-3ada-42dd-86a1-c7adcb0ba224",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        640,
+        -128
+      ],
+      "id": "36bed2ea-a3fe-4a08-b02a-20e8207f875a",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        288
+      ],
+      "id": "c928f0bf-e5ca-49d2-8e30-d9ae45cb6342",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "ebyLH15cC5xTGYqe",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=Analyze the homepage messaging and visual hierarchy of these two companies:\nCompany A: {{ $json.body.url_a }}\nCompany B: {{ $json.body.url_b }}\nUse the Tavily search tool to research both sites before analyzing.",
+        "options": {
+          "systemMessage": "You are an expert competitive intelligence analyst specializing in \nretail and e-commerce. Your job is to analyze and compare the \nhomepage messaging and visual hierarchy of two competitor websites.\n\n## YOUR ANALYSIS FRAMEWORK\n\nAnalyze each site across these four dimensions:\n\n1. **Hero Message** — What is the primary headline or value proposition \n   above the fold? What does the brand lead with?\n\n2. **Visual Hierarchy** — What does the page prioritize visually? \n   What is the first thing a visitor's eye is drawn to — product, \n   lifestyle, promotion, or brand statement?\n\n3. **Brand Voice & Tone** — How does the copy feel? \n   Aspirational? Functional? Playful? Premium? Minimal?\n\n4. **Primary Call to Action** — What action is the page pushing \n   the visitor toward? Shop now? Explore? Book? Sign up? \n   How prominent and specific is it?\n\n---\n\n## OUTPUT FORMAT\n\nFor each dimension return exactly this structure:\n\n### [Dimension Name]\n\n**Company A Finding:** ...\n**Evidence:** [OBSERVED: specific text or element seen on the page]\n**Signal:** What this suggests about their brand positioning\n**Advantage:** Which company has the stronger approach here and why\n\n**Company B Finding:** ...\n**Evidence:** [OBSERVED: specific text or element seen on the page]\n**Signal:** What this suggests about their brand positioning\n**Advantage:** Which company has the stronger approach here and why\n\n---\n\n## GUARDRAIL\n\nIf you cannot find specific evidence for a finding on the live page, \ntag it as [UNVERIFIED] instead of guessing. Never infer brand \npositioning from general knowledge about the company — only from \nwhat is directly observed on the page. Do not describe what a \nhomepage typically looks like for a brand of this type; describe \nonly what you actually retrieved."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        256,
+        -128
+      ],
+      "id": "f75c51e4-cf5a-4410-8d9e-0072b2ce23fd",
+      "name": "HomePage Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=Analyze the promotional strategy of these two companies:\nCompany A: {{ $json.body.url_a }}\nCompany B: {{ $json.body.url_b }}\n\nUse the Tavily search tool to research both sites before analyzing.",
+        "options": {
+          "systemMessage": "You are an expert competitive intelligence analyst specializing in \nretail and e-commerce. Your job is to analyze and compare the \npromotional strategy and offer placement of two competitor websites.\n\n\n\n## YOUR ANALYSIS FRAMEWORK\n\nAnalyze each site across these four dimensions:\n\n1. **Active Promotions** — What discounts, offers, or deals are visible? \n   What percentage off, dollar amount, or special offer is being promoted?\n\n2. **Promotional Placement** — Where do promotions appear on the page? \n   Above the fold? Banner? Hero image? How prominent are they?\n\n3. **Urgency & Scarcity Mechanics** — Is there a countdown timer, \n   \"limited time,\" \"while supplies last,\" or any urgency language?\n\n4. **Target Audience of the Offer** — Who is the promotion aimed at? \n   New customers? Loyalty members? A specific product category?\n\n---\n\n## OUTPUT FORMAT\n\nFor each dimension return exactly this structure:\n\n### [Dimension Name]\n\n**Company A Finding:** ...\n**Evidence:** [OBSERVED: specific text or element seen on the page]\n**Signal:** What this suggests about their promotional strategy\n**Advantage:** Which company has the stronger approach here and why\n\n**Company B Finding:** ...\n**Evidence:** [OBSERVED: specific text or element seen on the page]\n**Signal:** What this suggests about their promotional strategy\n**Advantage:** Which company has the stronger approach here and why\n\n---\n\n## GUARDRAIL\n\nIf you cannot find specific evidence for a finding on the live page, \ntag it as [UNVERIFIED] instead of guessing. Never fabricate \npromotional offers or discount amounts.You are a helpful assistant"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        256,
+        80
+      ],
+      "id": "06ea7dbc-9d1e-4a77-b189-cb3069887e84",
+      "name": "Promotions Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=Synthesize these two competitive research reports into a single executive report: Homepage Analysis: {{ $input.all()[0].json.output }} Promotions Analysis: {{ $input.all()[1].json.output }}\n",
+        "options": {
+          "systemMessage": "You are a senior competitive intelligence analyst. You will receive \ntwo research reports — one analyzing homepage messaging and one \nanalyzing promotional strategy — for two competing retail companies. \nYour job is to synthesize these into a single executive report.\n\n## YOUR RULES\n- Only include findings that have an [OBSERVED: ...] evidence citation\n- Move any [UNVERIFIED] findings to the Appendix section\n- For each executive summary section, write exactly 3 bullets\n- Each bullet must name a company, their competitive edge, what \n  they are actively doing to achieve it, and why it makes them \n  stronger. Do not list neutral differences — only actionable \n  competitive edges.\n- Never editorialize beyond what the evidence supports\n- Always end with one headline sentence in the core_dynamic field \n  starting with: \"The core competitive dynamic between Company A \n  and Company B is...\"\n\n## OUTPUT RULES\nReturn ONLY a valid JSON object. No markdown. No explanation. \nNo ```json fences. The response must be directly parseable \nby JSON.parse(). Use exactly this schema:\n\n{\n  \"company_a\": \"string\",\n  \"company_b\": \"string\",\n  \"generated\": \"string\",\n  \"executive_summary\": {\n    \"homepage\": [\"string\", \"string\", \"string\"],\n    \"promotions\": [\"string\", \"string\", \"string\"]\n  },\n  \"full_report\": {\n    \"homepage\": {\n      \"hero_message\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      },\n      \"visual_hierarchy\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      },\n      \"brand_voice\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      },\n      \"call_to_action\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      }\n    },\n    \"promotions\": {\n      \"active_promotions\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      },\n      \"promotional_placement\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      },\n      \"urgency_mechanics\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      },\n      \"target_audience\": {\n        \"company_a\": \"string\",\n        \"company_b\": \"string\",\n        \"advantage\": \"string\"\n      }\n    }\n  },\n  \"core_dynamic\": \"string\",\n  \"appendix\": [\"string\"]\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        784,
+        -128
+      ],
+      "id": "59c738bc-e587-4d04-84c1-a438e8a365bd",
+      "name": "Synthesis Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        64
+      ],
+      "id": "a05f1e14-b178-4f3a-b084-36a3d91a7ad8",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ebyLH15cC5xTGYqe",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "search_depth": "advanced",
+          "include_raw_content": true
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        416,
+        352
+      ],
+      "id": "273fa6bf-9583-435a-b4a2-33eb3a636bff",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "bDo5ZgyuwgjOsEjB",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "options": {
+          "search_depth": "advanced",
+          "include_raw_content": true
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        608,
+        352
+      ],
+      "id": "2697522e-988a-4b5c-b337-63c18186449d",
+      "name": "Search in Tavily1",
+      "credentials": {
+        "tavilyApi": {
+          "id": "bDo5ZgyuwgjOsEjB",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.output;\nconst parsed = JSON.parse(raw);\nreturn [{ json: parsed }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        -128
+      ],
+      "id": "9439914a-1624-46fc-8b17-1d3b79d1dc20",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "HomePage Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HomePage Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Promotions Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Synthesis Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Promotions Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HomePage Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Promotions Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Synthesis Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Synthesis Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Promotions Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily1": {
+      "ai_tool": [
+        [
+          {
+            "node": "HomePage Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "34265fdc-b3ee-4535-9f89-1f853a91c368",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ea08bee7022528eef7a64558ba229a1807a4c897e05c5efd078c198df8e5a809"
+  },
+  "id": "tW0Z8wILAHCTR4m8",
+  "tags": []
+}

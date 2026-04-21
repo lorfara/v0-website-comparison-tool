@@ -21,6 +21,11 @@ export function CompetitorForm({
   onStop,
   isAnalyzing,
 }: CompetitorFormProps) {
+  const handleClick = () => {
+    console.log('[v0] Button clicked - website1:', website1, 'website2:', website2, 'isAnalyzing:', isAnalyzing)
+    onAnalyze()
+  }
+
   return (
     <div className="mb-12 border border-border bg-card p-8">
       <h3 className="mb-6 font-serif text-xl tracking-wide text-foreground">
@@ -59,7 +64,7 @@ export function CompetitorForm({
 
       <div className="flex items-center justify-center gap-3">
         <Button
-          onClick={onAnalyze}
+          onClick={handleClick}
           disabled={isAnalyzing || !website1 || !website2}
           className={`px-8 py-2 text-sm tracking-wide text-white transition-colors duration-300 disabled:opacity-50 ${
             isAnalyzing

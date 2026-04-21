@@ -259,6 +259,13 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
       {/* Executive Summary Tab */}
       {activeTab === "executive" && (
         <div className="divide-y divide-border bg-white">
+          {/* Debug Output */}
+          <div className="bg-yellow-100 p-4 text-xs font-mono">
+            <p><strong>DEBUG webhookData:</strong> {JSON.stringify(webhookData, null, 2)}</p>
+            <p><strong>DEBUG executive_summary:</strong> {JSON.stringify(webhookData?.executive_summary)}</p>
+            <p><strong>DEBUG executiveHomepage:</strong> {JSON.stringify(executiveHomepage)}</p>
+            <p><strong>DEBUG executivePromotions:</strong> {JSON.stringify(executivePromotions)}</p>
+          </div>
           {/* Homepage Section */}
           <div className="px-8 py-8">
             <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">

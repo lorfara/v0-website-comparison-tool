@@ -4,29 +4,14 @@ import { useState, useRef } from "react"
 import { Header } from "@/components/header"
 import { CompetitorForm } from "@/components/competitor-form"
 import { ReportSection } from "@/components/report-section"
-import { sendToWebhook } from "@/lib/webhook"
-
-export interface WebhookResponse {
-  homepageMessaging?: {
-    findings: string[]
-  }
-  promotionalStrategy?: {
-    findings: string[]
-  }
-  productDiscovery?: {
-    findings: string[]
-  }
-  aiFeatures?: {
-    findings: string[]
-  }
-}
+import { sendToWebhook, type WebhookResponseData } from "@/lib/webhook"
 
 export default function Home() {
   const [website1, setWebsite1] = useState("CB2.com")
   const [website2, setWebsite2] = useState("WestElm.com")
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [reportGenerated, setReportGenerated] = useState(false)
-  const [webhookData, setWebhookData] = useState<WebhookResponse | null>(null)
+  const [webhookData, setWebhookData] = useState<WebhookResponseData | null>(null)
   const formRef = useRef<HTMLDivElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
 

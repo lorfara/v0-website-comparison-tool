@@ -10,6 +10,7 @@ interface CompetitorFormProps {
   setWebsite1: (value: string) => void
   setWebsite2: (value: string) => void
   onAnalyze: () => void
+  onStop: () => void
   isAnalyzing: boolean
 }
 
@@ -19,6 +20,7 @@ export function CompetitorForm({
   setWebsite1,
   setWebsite2,
   onAnalyze,
+  onStop,
   isAnalyzing,
 }: CompetitorFormProps) {
   const handleAnalyzeClick = async () => {
@@ -67,7 +69,7 @@ export function CompetitorForm({
         </div>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex items-center justify-center gap-3">
         <Button
           onClick={handleAnalyzeClick}
           disabled={isAnalyzing || !website1 || !website2}
@@ -106,6 +108,16 @@ export function CompetitorForm({
             "Run Competitive Analysis"
           )}
         </Button>
+
+        {isAnalyzing && (
+          <Button
+            onClick={onStop}
+            variant="outline"
+            className="border-border px-6 py-2 text-sm tracking-wide text-foreground hover:bg-secondary"
+          >
+            Stop
+          </Button>
+        )}
       </div>
     </div>
   )

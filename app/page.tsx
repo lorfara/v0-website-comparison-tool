@@ -11,17 +11,26 @@ export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [reportGenerated, setReportGenerated] = useState(false)
   const formRef = useRef<HTMLDivElement>(null)
+  const analysisTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleRerun = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
+  const handleStop = () => {
+    if (analysisTimerRef.current) {
+      clearTimeout(analysisTimerRef.current)
+      analysisTimerRef.current = null
+    }
+    setIsAnalyzing(false)
+  }
+
   const handleAnalyze = () => {
     setIsAnalyzing(true)
-    // Simulate analysis
-    setTimeout(() => {
+    analysisTimerRef.current = setTimeout(() => {
       setIsAnalyzing(false)
       setReportGenerated(true)
+      analysisTimerRef.current = null
     }, 2000)
   }
 
@@ -50,6 +59,7 @@ export default function Home() {
           setWebsite1={setWebsite1}
           setWebsite2={setWebsite2}
           onAnalyze={handleAnalyze}
+          onStop={handleStop}
           isAnalyzing={isAnalyzing}
         />
         </div>

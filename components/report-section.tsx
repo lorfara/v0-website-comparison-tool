@@ -141,7 +141,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
                   key={idx}
                   className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
                 >
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-foreground" />
+                  <span className="print-bullet mt-1.5 h-2 w-2 shrink-0 rounded-full bg-foreground" />
                   <span>{finding}</span>
                 </li>
               ))}
@@ -159,7 +159,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
                   key={idx}
                   className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
                 >
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-foreground" />
+                  <span className="print-bullet mt-1.5 h-2 w-2 shrink-0 rounded-full bg-foreground" />
                   <span>{finding}</span>
                 </li>
               ))}

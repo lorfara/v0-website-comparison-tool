@@ -130,6 +130,21 @@
 
   body {
     counter-reset: page;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-bullet {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+    min-height: 6px;
+    border-radius: 50%;
+    background-color: #111 !important;
+    color: #111 !important;
+    margin-top: 5px;
+    flex-shrink: 0;
   }
 
   .print-page-footer {

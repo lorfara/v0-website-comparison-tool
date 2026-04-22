@@ -43,13 +43,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   const coreDynamic = webhookData?.core_dynamic ?? "coming soon"
   const appendix = webhookData?.appendix ?? []
 
-  const formatDate = (dateStr: string | undefined): string => {
-    if (!dateStr) return ""
-    const date = new Date(dateStr + "T00:00:00")
-    return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
-  }
-
-  const reportDate = formatDate(webhookData?.generated)
+  const reportDate = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
 
   useEffect(() => {
     if (typeof window !== "undefined") {

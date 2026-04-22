@@ -2,7 +2,7 @@ import type { WebhookResponseData } from './webhook-types'
 
 export type { WebhookResponseData }
 
-const WEBHOOK_URL = 'https://loreleifara.app.n8n.cloud/webhook/cfaab260-e02b-46d6-9113-3f27b7ad5442'
+const WEBHOOK_URL = 'https://loreleifara.app.n8n.cloud/webhook-test/cfaab260-e02b-46d6-9113-3f27b7ad5442'
 
 export async function sendToWebhook(data: object): Promise<WebhookResponseData | null> {
   const response = await fetch(WEBHOOK_URL, {

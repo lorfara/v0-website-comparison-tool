@@ -124,7 +124,10 @@
     @apply bg-background text-foreground;
   }
   li::marker {
-    color: #000000;
+    color: #C4956A;
+  }
+  h2 {
+    border-bottom: 2px solid #C4956A;
   }
 }
 
@@ -151,7 +154,7 @@
     text-indent: 0;
   }
   li::marker {
-    color: #000000;
+    color: #C4956A;
   }
 
   body {

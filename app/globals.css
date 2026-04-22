@@ -137,8 +137,19 @@
 
   .no-print { display: none !important; }
 
-  ul { padding-left: 20px; margin-left: 0; }
-  li { padding-left: 8px; margin-bottom: 6px; list-style-position: outside; }
+  ul, ol {
+    padding-left: 0;
+    margin-left: 24px;
+  }
+  li {
+    padding-left: 4px;
+    margin-bottom: 8px;
+    list-style-position: outside;
+    text-indent: 0;
+  }
+  li::marker {
+    color: #3D3D3D;
+  }
 
   body {
     counter-reset: page;
@@ -178,5 +189,4 @@
   h3 { color: #8B6914; text-transform: uppercase; }
   strong { color: #2C1810; }
   .advantage-text { color: #C4956A; }
-  li { color: #3D3D3D; }
 }

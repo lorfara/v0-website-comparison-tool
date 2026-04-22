@@ -170,6 +170,10 @@
     break-before: page;
   }
 
+  .key-insight-container {
+    page-break-before: always;
+  }
+
   .print-bullet {
     display: inline-block;
     width: 6px;

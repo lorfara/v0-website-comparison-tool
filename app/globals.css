@@ -123,4 +123,85 @@
   body {
     @apply bg-background text-foreground;
   }
+  li::marker {
+    color: #C4956A;
+  }
+  h2 {
+    border-bottom: 2px solid #C4956A;
+  }
+}
+
+@media print {
+  @page {
+    margin: 1in;
+    @bottom-center {
+      content: counter(page) " of " counter(pages);
+      font-size: 10px;
+      color: #666;
+    }
+  }
+
+  .no-print { display: none !important; }
+
+  ul, ol {
+    padding-left: 0;
+    margin-left: 24px;
+  }
+  li {
+    padding-left: 4px;
+    margin-bottom: 8px;
+    list-style-position: outside;
+    text-indent: 0;
+  }
+  li::marker {
+    color: #C4956A;
+  }
+
+  body {
+    counter-reset: page;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .toc-section {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .key-insight {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .key-insight-container {
+    page-break-before: always;
+  }
+
+  .print-bullet {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    min-width: 6px;
+    min-height: 6px;
+    border-radius: 50%;
+    background-color: #111 !important;
+    color: #111 !important;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .print-page-footer {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    font-size: 10px;
+    color: #888;
+    font-family: Georgia, serif;
+  }
+
+  /* Brand colors for print */
+  h2 { color: #2C1810; border-bottom: 2px solid #C4956A; padding-bottom: 8px; }
+  h3 { color: #8B6914; text-transform: uppercase; }
+  strong { color: #2C1810; }
+  .advantage-text { color: #C4956A; }
 }

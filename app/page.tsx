@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Header } from "@/components/header"
 import { CompetitorForm } from "@/components/competitor-form"
 import { ReportSection } from "@/components/report-section"
@@ -15,6 +15,14 @@ export default function Home() {
   const [webhookData, setWebhookData] = useState<WebhookResponseData | null>(null)
   const formRef = useRef<HTMLDivElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('lastReport')
+    if (saved) {
+      setWebhookData(JSON.parse(saved))
+      setReportGenerated(true)
+    }
+  }, [])
 
   const handleRerun = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -58,6 +66,7 @@ export default function Home() {
       console.log('[v0] Setting webhook data and reportGenerated')
       setWebhookData(response)
       setReportGenerated(true)
+      localStorage.setItem('lastReport', JSON.stringify(response))
     } catch (error) {
       console.error('[v0] Analysis failed:', error)
     } finally {
@@ -73,21 +82,21 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-4xl px-6 py-12">
-        <div className="mb-12 text-center">
+        <div className="no-print mb-12 text-center">
           <h1 className="font-serif text-3xl tracking-wide text-foreground md:text-4xl">
             Competitive Analysis Agent
           </h1>
           <div className="mx-auto mt-4 h-px w-24 bg-foreground" />
         </div>
 
-        <div className="mb-10">
+        <div className="no-print mb-10">
           <p className="text-center text-muted-foreground leading-relaxed">
             Enter two websites to compare across four dimensions: Homepage Messaging & Visual Hierarchy, 
             Promotional Strategy & Offers, Product Discovery Experience, and AI-Powered Features.
           </p>
         </div>
 
-        <div ref={formRef}>
+        <div ref={formRef} className="no-print">
         <CompetitorForm
           website1={website1}
           website2={website2}
@@ -106,19 +115,6 @@ export default function Home() {
             onRerun={handleRerun}
             webhookData={webhookData}
           />
-        )}
-
-        {reportGenerated && (
-          <div className="mt-8">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Debug: Raw Response
-            </p>
-            <pre className="overflow-x-auto rounded-sm bg-muted p-4 text-xs leading-relaxed text-muted-foreground">
-              {webhookData
-                ? JSON.stringify(webhookData, null, 2)
-                : "null — no data returned from webhook"}
-            </pre>
-          </div>
         )}
       </main>
     </div>

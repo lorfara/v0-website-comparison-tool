@@ -145,6 +145,7 @@
 
   .toc-section {
     page-break-after: always;
+    break-after: page;
   }
 
   .print-bullet {

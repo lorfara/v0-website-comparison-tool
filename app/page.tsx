@@ -194,19 +194,6 @@ export default function Home() {
             webhookData={webhookData}
           />
         )}
-
-        {reportGenerated && (
-          <div className="no-print mt-8">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Debug: Raw Response
-            </p>
-            <pre className="overflow-x-auto rounded-sm bg-muted p-4 text-xs leading-relaxed text-muted-foreground">
-              {webhookData
-                ? JSON.stringify(webhookData, null, 2)
-                : "null — no data returned from webhook"}
-            </pre>
-          </div>
-        )}
       </main>
     </div>
   )

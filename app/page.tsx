@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Header } from "@/components/header"
 import { CompetitorForm } from "@/components/competitor-form"
 import { ReportSection } from "@/components/report-section"
@@ -15,6 +15,14 @@ export default function Home() {
   const [webhookData, setWebhookData] = useState<WebhookResponseData | null>(null)
   const formRef = useRef<HTMLDivElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('lastReport')
+    if (saved) {
+      setWebhookData(JSON.parse(saved))
+      setReportGenerated(true)
+    }
+  }, [])
 
   const handleRerun = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
@@ -58,6 +66,7 @@ export default function Home() {
       console.log('[v0] Setting webhook data and reportGenerated')
       setWebhookData(response)
       setReportGenerated(true)
+      localStorage.setItem('lastReport', JSON.stringify(response))
     } catch (error) {
       console.error('[v0] Analysis failed:', error)
     } finally {

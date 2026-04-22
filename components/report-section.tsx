@@ -323,7 +323,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
         </div>
       )}
 
-      <div className="border-t border-border bg-secondary px-8 py-8">
+      <div className="no-print border-t border-border bg-secondary px-8 py-8">
         <p className="mb-6 text-center text-xs uppercase tracking-wide text-muted-foreground">
           Report generated on {new Date().toLocaleDateString()} • {website1} vs {website2}
         </p>

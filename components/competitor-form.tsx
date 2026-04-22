@@ -22,7 +22,7 @@ export function CompetitorForm({
   isAnalyzing,
 }: CompetitorFormProps) {
   return (
-    <div className="mb-12 border border-border bg-card p-8">
+    <div className="mb-12 border border-border bg-card p-8 no-print">
       <h3 className="mb-6 font-serif text-xl tracking-wide text-foreground">
         Competitor Websites
       </h3>

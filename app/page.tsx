@@ -109,7 +109,7 @@ export default function Home() {
         )}
 
         {reportGenerated && (
-          <div className="mt-8">
+          <div className="mt-8 no-print">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Debug: Raw Response
             </p>

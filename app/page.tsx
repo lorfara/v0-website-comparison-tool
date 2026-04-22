@@ -87,7 +87,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div ref={formRef}>
+        <div ref={formRef} className="no-print">
         <CompetitorForm
           website1={website1}
           website2={website2}

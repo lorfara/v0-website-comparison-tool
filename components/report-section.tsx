@@ -1,22 +1,10 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send } from "lucide-react"
 import { type WebhookResponseData } from "@/lib/webhook"
-
-declare global {
-  interface Window {
-    html2canvas: (element: HTMLElement, options?: object) => Promise<HTMLCanvasElement>
-    jspdf: { jsPDF: new (orientation?: string, unit?: string, format?: string | number[]) => {
-      internal: { pageSize: { getWidth: () => number; getHeight: () => number } }
-      addImage: (data: string, format: string, x: number, y: number, width: number, height: number) => void
-      addPage: () => void
-      save: (filename: string) => void
-    }}
-  }
-}
 
 type TabId = "executive" | "full"
 
@@ -37,32 +25,6 @@ interface FeedbackState {
 export function ReportSection({ website1, website2, onRerun, webhookData }: ReportSectionProps) {
   const [activeTab, setActiveTab] = useState<TabId>("executive")
   const [feedback, setFeedback] = useState<Record<number, FeedbackState>>({})
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
-  const [scriptsLoaded, setScriptsLoaded] = useState(false)
-  const executiveRef = useRef<HTMLDivElement>(null)
-  const fullReportRef = useRef<HTMLDivElement>(null)
-
-  // Load html2canvas and jsPDF from CDN
-  useEffect(() => {
-    const loadScript = (src: string): Promise<void> => {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
-          resolve()
-          return
-        }
-        const script = document.createElement("script")
-        script.src = src
-        script.onload = () => resolve()
-        script.onerror = reject
-        document.head.appendChild(script)
-      })
-    }
-
-    Promise.all([
-      loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
-      loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
-    ]).then(() => setScriptsLoaded(true))
-  }, [])
 
   // Data mappings based on webhook structure
   const executiveHomepage = webhookData?.executive_summary?.homepage ?? ["coming soon", "coming soon", "coming soon"]
@@ -85,73 +47,8 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
   }
 
-  const generatePdf = async (element: HTMLElement, filename: string) => {
-    if (!scriptsLoaded || !window.html2canvas || !window.jspdf) {
-      alert("PDF libraries are still loading. Please try again.")
-      return
-    }
-
-    setIsGeneratingPdf(true)
-
-    try {
-      const canvas = await window.html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-      })
-
-      const imgData = canvas.toDataURL("image/png")
-      const { jsPDF } = window.jspdf
-      const pdf = new jsPDF("p", "mm", "a4")
-
-      const pdfWidth = pdf.internal.pageSize.getWidth()
-      const pdfHeight = pdf.internal.pageSize.getHeight()
-      const imgWidth = canvas.width
-      const imgHeight = canvas.height
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight)
-      const imgX = (pdfWidth - imgWidth * ratio) / 2
-      const scaledHeight = imgHeight * ratio
-
-      // If content fits on one page
-      if (scaledHeight <= pdfHeight) {
-        pdf.addImage(imgData, "PNG", imgX, 0, imgWidth * ratio, scaledHeight)
-      } else {
-        // Multi-page support
-        let heightLeft = scaledHeight
-        let position = 0
-        const pageHeight = pdfHeight
-
-        pdf.addImage(imgData, "PNG", imgX, position, imgWidth * ratio, scaledHeight)
-        heightLeft -= pageHeight
-
-        while (heightLeft > 0) {
-          position = -pageHeight * ((scaledHeight - heightLeft) / scaledHeight) * (scaledHeight / (imgWidth * ratio))
-          pdf.addPage()
-          pdf.addImage(imgData, "PNG", imgX, position, imgWidth * ratio, scaledHeight)
-          heightLeft -= pageHeight
-        }
-      }
-
-      pdf.save(filename)
-    } catch (error) {
-      console.error("PDF generation failed:", error)
-      alert("Failed to generate PDF. Please try again.")
-    } finally {
-      setIsGeneratingPdf(false)
-    }
-  }
-
-  const handleDownloadExecutive = () => {
-    if (executiveRef.current) {
-      generatePdf(executiveRef.current, "competitive-intelligence-report.pdf")
-    }
-  }
-
-  const handleDownloadFull = () => {
-    if (fullReportRef.current) {
-      generatePdf(fullReportRef.current, "competitive-intelligence-report.pdf")
-    }
+  const handleDownload = () => {
+    window.print()
   }
 
   const tabs: { id: TabId; label: string }[] = [
@@ -162,7 +59,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   return (
     <div className="bg-card">
       {/* Tab Bar */}
-      <div className="flex items-end justify-between border-b border-border px-8 pt-6 pb-0">
+      <div className="no-print flex items-end justify-between border-b border-border px-8 pt-6 pb-0">
         <div className="flex gap-1">
           {tabs.map((tab) => (
             <button
@@ -179,27 +76,14 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
           ))}
         </div>
         <div className="pb-3">
-          {activeTab === "executive" ? (
-            <Button
-              onClick={handleDownloadExecutive}
-              disabled={isGeneratingPdf || !scriptsLoaded}
-              variant="outline"
-              className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
-            >
-              <Download className="h-4 w-4" />
-              {isGeneratingPdf ? "Generating..." : "Download as PDF"}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleDownloadFull}
-              disabled={isGeneratingPdf || !scriptsLoaded}
-              variant="outline"
-              className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
-            >
-              <Download className="h-4 w-4" />
-              {isGeneratingPdf ? "Generating..." : "Download as PDF"}
-            </Button>
-          )}
+          <Button
+            onClick={handleDownload}
+            variant="outline"
+            className="flex items-center gap-2 border-border text-foreground hover:bg-secondary hover:text-foreground"
+          >
+            <Download className="h-4 w-4" />
+            Download as PDF
+          </Button>
         </div>
       </div>
 

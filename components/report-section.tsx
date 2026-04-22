@@ -184,6 +184,15 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
               Coming soon — this dimension will be available in Phase 2.
             </p>
           </div>
+
+          {/* Key Insight Section */}
+          {coreDynamic && coreDynamic !== "coming soon" && (
+            <div className="key-insight key-insight-container px-8 py-8 bg-secondary">
+              <p className="text-sm leading-relaxed text-foreground">
+                <strong className="font-serif print:text-[#2C1810]">Key Insight:</strong> {coreDynamic}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

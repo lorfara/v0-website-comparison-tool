@@ -124,7 +124,7 @@
     @apply bg-background text-foreground;
   }
   li::marker {
-    color: var(--accent);
+    color: #000000;
   }
 }
 
@@ -151,7 +151,7 @@
     text-indent: 0;
   }
   li::marker {
-    color: #C4956A;
+    color: #000000;
   }
 
   body {
@@ -163,6 +163,11 @@
   .toc-section {
     page-break-after: always;
     break-after: page;
+  }
+
+  .key-insight {
+    page-break-before: always;
+    break-before: page;
   }
 
   .print-bullet {

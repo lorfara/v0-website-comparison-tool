@@ -339,7 +339,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* Core Dynamic Section */}
           {coreDynamic && coreDynamic !== "coming soon" && (
-            <div className="px-8 py-8 bg-secondary">
+            <div className="key-insight px-8 py-8 bg-secondary">
               <p className="text-sm leading-relaxed text-foreground">
                 <strong className="font-serif print:text-[#2C1810]">Key Insight:</strong> {coreDynamic}
               </p>

@@ -135,14 +135,14 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
             <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               Homepage Messaging & Visual Hierarchy
             </h4>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-4">
               {executiveHomepage.map((finding, idx) => (
                 <li
                   key={idx}
-                  className="flex items-start gap-4 text-sm leading-relaxed text-muted-foreground"
+                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
                 >
-                  <span className="mt-2 h-1 w-1 shrink-0 bg-foreground" />
-                  {finding}
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-foreground" />
+                  <span>{finding}</span>
                 </li>
               ))}
             </ul>
@@ -153,14 +153,14 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
             <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               Promotional Strategy & Offers
             </h4>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-4">
               {executivePromotions.map((finding, idx) => (
                 <li
                   key={idx}
-                  className="flex items-start gap-4 text-sm leading-relaxed text-muted-foreground"
+                  className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"
                 >
-                  <span className="mt-2 h-1 w-1 shrink-0 bg-foreground" />
-                  {finding}
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-foreground" />
+                  <span>{finding}</span>
                 </li>
               ))}
             </ul>

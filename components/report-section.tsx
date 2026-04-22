@@ -199,7 +199,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
           </div>
 
           {/* Table of Contents */}
-          <div className="px-8 py-8 bg-secondary/40">
+          <div className="toc-section px-8 py-8 bg-secondary/40">
             <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
               Table of Contents
             </h4>

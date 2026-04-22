@@ -126,12 +126,25 @@
 }
 
 @media print {
+  @page {
+    margin: 1in;
+    @bottom-center {
+      content: counter(page) " of " counter(pages);
+      font-size: 10px;
+      color: #666;
+    }
+  }
+
   .no-print { display: none !important; }
 
   body {
     counter-reset: page;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  .toc-section {
+    page-break-after: always;
   }
 
   .print-bullet {

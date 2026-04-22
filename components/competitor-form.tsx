@@ -9,6 +9,7 @@ interface CompetitorFormProps {
   setWebsite2: (value: string) => void
   onAnalyze: () => void
   onStop: () => void
+  onLoadSampleData: () => void
   isAnalyzing: boolean
 }
 
@@ -19,6 +20,7 @@ export function CompetitorForm({
   setWebsite2,
   onAnalyze,
   onStop,
+  onLoadSampleData,
   isAnalyzing,
 }: CompetitorFormProps) {
   return (
@@ -101,6 +103,16 @@ export function CompetitorForm({
           ) : (
             "Run Competitive Analysis"
           )}
+        </Button>
+
+        <Button
+          type="button"
+          onClick={onLoadSampleData}
+          disabled={isAnalyzing}
+          variant="outline"
+          className="border-border px-6 py-2 text-sm tracking-wide text-foreground hover:bg-secondary disabled:opacity-50"
+        >
+          Load Sample Data
         </Button>
 
         {isAnalyzing && (

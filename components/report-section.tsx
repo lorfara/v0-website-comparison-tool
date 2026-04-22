@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Download, ThumbsUp, ThumbsDown, MessageSquare, Send } from "lucide-react"
@@ -51,6 +51,32 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
   const reportDate = formatDate(webhookData?.generated)
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleBeforePrint = () => {
+        const reportContent = document.querySelector(".report-content")
+        if (!reportContent) return
+
+        const pages = reportContent.querySelectorAll(".print-page-break")
+        let pageNum = 1
+
+        pages.forEach((page) => {
+          const existing = page.querySelector(".print-page-footer")
+          if (existing) existing.remove()
+
+          const footer = document.createElement("div")
+          footer.className = "print-page-footer"
+          footer.textContent = `Page ${pageNum}`
+          page.appendChild(footer)
+          pageNum++
+        })
+      }
+
+      window.addEventListener("beforeprint", handleBeforePrint)
+      return () => window.removeEventListener("beforeprint", handleBeforePrint)
+    }
+  }, [])
+
   const getFeedback = (index: number): FeedbackState => {
     return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
   }
@@ -97,7 +123,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       {/* Executive Summary Tab */}
       {activeTab === "executive" && (
-        <div className="divide-y divide-border bg-white">
+        <div className="report-content print-page-break divide-y divide-border bg-white">
           {/* Print-only header */}
           <div className="hidden print:block px-8 pt-10 pb-6 border-b border-border">
             <h1 className="font-serif text-2xl font-semibold tracking-wide text-foreground">Website Competitive Analysis</h1>
@@ -164,7 +190,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       {/* Full Report Tab */}
       {activeTab === "full" && (
-        <div className="divide-y divide-border bg-white">
+        <div className="report-content print-page-break divide-y divide-border bg-white">
           {/* Print-only header */}
           <div className="hidden print:block px-8 pt-10 pb-6 border-b border-border">
             <h1 className="font-serif text-2xl font-semibold tracking-wide text-foreground">Website Competitive Analysis</h1>

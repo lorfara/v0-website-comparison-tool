@@ -137,6 +137,9 @@
 
   .no-print { display: none !important; }
 
+  ul { padding-left: 20px; margin-left: 0; }
+  li { padding-left: 8px; margin-bottom: 6px; list-style-position: outside; }
+
   body {
     counter-reset: page;
     -webkit-print-color-adjust: exact;
@@ -169,4 +172,11 @@
     color: #888;
     font-family: Georgia, serif;
   }
+
+  /* Brand colors for print */
+  h2 { color: #2C1810; border-bottom: 2px solid #C4956A; padding-bottom: 8px; }
+  h3 { color: #8B6914; text-transform: uppercase; }
+  strong { color: #2C1810; }
+  .advantage-text { color: #C4956A; }
+  li { color: #3D3D3D; }
 }

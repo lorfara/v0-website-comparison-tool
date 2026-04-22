@@ -76,7 +76,12 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   }
 
   const handleDownload = () => {
+    const company1 = (webhookData?.company_a || "company1").replace(/\s+/g, '_').toLowerCase()
+    const company2 = (webhookData?.company_b || "company2").replace(/\s+/g, '_').toLowerCase()
+    const date = new Date().toISOString().split('T')[0]
+    document.title = `competitive_analysis_${company1}_${company2}_${date}`
     window.print()
+    document.title = 'Competitive Analysis Agent'
   }
 
   const tabs: { id: TabId; label: string }[] = [
@@ -126,7 +131,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
           </div>
           {/* Homepage Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               Homepage Messaging & Visual Hierarchy
             </h4>
             <ul className="flex flex-col gap-4">
@@ -144,7 +149,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* Promotions Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               Promotional Strategy & Offers
             </h4>
             <ul className="flex flex-col gap-4">
@@ -162,7 +167,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* Product Discovery Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               Product Discovery Experience
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -172,7 +177,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* AI-Powered Features Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               AI-Powered Features
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -224,44 +229,44 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* Homepage Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-8 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-8 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               Homepage Messaging & Visual Hierarchy
             </h4>
 
             <div className="mb-8 space-y-6">
               <div>
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Hero Message</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Hero Message</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeHero?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeHero?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeHero?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullHomeHero?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullHomeHero?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullHomeHero?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-6">
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Visual Hierarchy</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Visual Hierarchy</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeVisual?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeVisual?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeVisual?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullHomeVisual?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullHomeVisual?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullHomeVisual?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-6">
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Brand Voice</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Brand Voice</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeBrand?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeBrand?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeBrand?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullHomeBrand?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullHomeBrand?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullHomeBrand?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-6">
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Call-to-Action</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Call-to-Action</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullHomeCTA?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullHomeCTA?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullHomeCTA?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullHomeCTA?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullHomeCTA?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullHomeCTA?.advantage || "coming soon"}</p>
                 </div>
               </div>
             </div>
@@ -269,44 +274,44 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* Promotions Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-8 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-8 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               Promotional Strategy & Offers
             </h4>
 
             <div className="mb-8 space-y-6">
               <div>
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Active Promotions</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Active Promotions</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoActive?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoActive?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoActive?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullPromoActive?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullPromoActive?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullPromoActive?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-6">
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Promotional Placement</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Promotional Placement</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoPlacement?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoPlacement?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoPlacement?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullPromoPlacement?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullPromoPlacement?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullPromoPlacement?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-6">
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Urgency Mechanics</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Urgency Mechanics</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoUrgency?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoUrgency?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoUrgency?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullPromoUrgency?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullPromoUrgency?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullPromoUrgency?.advantage || "coming soon"}</p>
                 </div>
               </div>
 
               <div className="border-t border-border pt-6">
-                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground">Target Audience</h5>
+                <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide print:text-[#8B6914] text-foreground">Target Audience</h5>
                 <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
-                  <p><strong className="text-foreground">{website1}:</strong> {fullPromoAudience?.company_a || "coming soon"}</p>
-                  <p><strong className="text-foreground">{website2}:</strong> {fullPromoAudience?.company_b || "coming soon"}</p>
-                  <p><strong className="text-foreground">Advantage:</strong> {fullPromoAudience?.advantage || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website1}:</strong> {fullPromoAudience?.company_a || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#2C1810]">{website2}:</strong> {fullPromoAudience?.company_b || "coming soon"}</p>
+                  <p><strong className="text-foreground print:text-[#C4956A]">Advantage:</strong> {fullPromoAudience?.advantage || "coming soon"}</p>
                 </div>
               </div>
             </div>
@@ -314,7 +319,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* Product Discovery Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               Product Discovery Experience
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -324,7 +329,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
           {/* AI-Powered Features Section */}
           <div className="px-8 py-8">
-            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
+            <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
               AI-Powered Features
             </h4>
             <p className="text-sm leading-relaxed text-muted-foreground">
@@ -336,7 +341,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
           {coreDynamic && coreDynamic !== "coming soon" && (
             <div className="px-8 py-8 bg-secondary">
               <p className="text-sm leading-relaxed text-foreground">
-                <strong className="font-serif">Key Insight:</strong> {coreDynamic}
+                <strong className="font-serif print:text-[#2C1810]">Key Insight:</strong> {coreDynamic}
               </p>
             </div>
           )}
@@ -344,7 +349,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
           {/* Appendix Section */}
           {appendix && appendix.length > 0 && (
             <div className="px-8 py-8">
-              <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
+              <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide print:text-[#2C1810] print:border-b print:border-[#C4956A] print:pb-3 text-foreground">
                 Appendix
               </h4>
               <ul className="flex flex-col gap-3">

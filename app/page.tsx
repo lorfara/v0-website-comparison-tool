@@ -158,14 +158,14 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-4xl px-6 py-12">
-        <div className="mb-12 text-center">
+        <div className="no-print mb-12 text-center">
           <h1 className="font-serif text-3xl tracking-wide text-foreground md:text-4xl">
             Competitive Analysis Agent
           </h1>
           <div className="mx-auto mt-4 h-px w-24 bg-foreground" />
         </div>
 
-        <div className="mb-10">
+        <div className="no-print mb-10">
           <p className="text-center text-muted-foreground leading-relaxed">
             Enter two websites to compare across four dimensions: Homepage Messaging & Visual Hierarchy, 
             Promotional Strategy & Offers, Product Discovery Experience, and AI-Powered Features.
@@ -195,7 +195,7 @@ export default function Home() {
         )}
 
         {reportGenerated && (
-          <div className="mt-8">
+          <div className="no-print mt-8">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Debug: Raw Response
             </p>

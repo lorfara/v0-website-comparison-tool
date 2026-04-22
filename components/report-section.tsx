@@ -89,7 +89,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       {/* Executive Summary Tab */}
       {activeTab === "executive" && (
-        <div ref={executiveRef} className="divide-y divide-border bg-white">
+        <div className="divide-y divide-border bg-white">
           {/* Homepage Section */}
           <div className="px-8 py-8">
             <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
@@ -150,7 +150,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       {/* Full Report Tab */}
       {activeTab === "full" && (
-        <div ref={fullReportRef} className="divide-y divide-border bg-white">
+        <div className="divide-y divide-border bg-white">
 
           {/* Table of Contents */}
           <div className="px-8 py-8 bg-secondary/40">

@@ -61,11 +61,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
     Promise.all([
       loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"),
       loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"),
-    ]).then(() => {
-      setScriptsLoaded(true)
-    }).catch((err) => {
-      console.error("[v0] Failed to load PDF scripts:", err)
-    })
+    ]).then(() => setScriptsLoaded(true))
   }, [])
 
   // Data mappings based on webhook structure
@@ -84,16 +80,6 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
   const coreDynamic = webhookData?.core_dynamic ?? "coming soon"
   const appendix = webhookData?.appendix ?? []
-
-  const formatDate = (raw?: string): string => {
-    if (!raw) return new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
-    const d = new Date(raw)
-    return isNaN(d.getTime())
-      ? new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
-      : d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
-  }
-
-  const generatedDate = formatDate(webhookData?.generated)
 
   const getFeedback = (index: number): FeedbackState => {
     return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
@@ -149,7 +135,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       pdf.save(filename)
     } catch (error) {
-      console.error("[v0] PDF generation failed:", error)
+      console.error("PDF generation failed:", error)
       alert("Failed to generate PDF. Please try again.")
     } finally {
       setIsGeneratingPdf(false)
@@ -455,7 +441,7 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
 
       <div className="border-t border-border bg-secondary px-8 py-8">
         <p className="mb-6 text-center text-xs uppercase tracking-wide text-muted-foreground">
-          Report generated on {generatedDate} • {website1} vs {website2}
+          Report generated on {new Date().toLocaleDateString()} • {website1} vs {website2}
         </p>
         <div className="flex justify-center">
           <Button

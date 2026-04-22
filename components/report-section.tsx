@@ -43,6 +43,14 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
   const coreDynamic = webhookData?.core_dynamic ?? "coming soon"
   const appendix = webhookData?.appendix ?? []
 
+  const formatDate = (dateStr: string | undefined): string => {
+    if (!dateStr) return ""
+    const date = new Date(dateStr + "T00:00:00")
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+  }
+
+  const reportDate = formatDate(webhookData?.generated)
+
   const getFeedback = (index: number): FeedbackState => {
     return feedback[index] || { rating: null, showChat: false, question: "", messages: [] }
   }
@@ -90,6 +98,12 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
       {/* Executive Summary Tab */}
       {activeTab === "executive" && (
         <div className="divide-y divide-border bg-white">
+          {/* Print-only header */}
+          <div className="hidden print:block px-8 pt-10 pb-6 border-b border-border">
+            <h1 className="font-serif text-2xl font-semibold tracking-wide text-foreground">Website Competitive Analysis</h1>
+            <h2 className="font-serif text-lg tracking-wide text-muted-foreground mt-1">Executive Summary</h2>
+            {reportDate && <p className="mt-3 text-sm text-muted-foreground">{reportDate}</p>}
+          </div>
           {/* Homepage Section */}
           <div className="px-8 py-8">
             <h4 className="mb-6 font-serif text-lg font-semibold tracking-wide text-foreground">
@@ -151,6 +165,12 @@ export function ReportSection({ website1, website2, onRerun, webhookData }: Repo
       {/* Full Report Tab */}
       {activeTab === "full" && (
         <div className="divide-y divide-border bg-white">
+          {/* Print-only header */}
+          <div className="hidden print:block px-8 pt-10 pb-6 border-b border-border">
+            <h1 className="font-serif text-2xl font-semibold tracking-wide text-foreground">Website Competitive Analysis</h1>
+            <h2 className="font-serif text-lg tracking-wide text-muted-foreground mt-1">Full Report</h2>
+            {reportDate && <p className="mt-3 text-sm text-muted-foreground">{reportDate}</p>}
+          </div>
 
           {/* Table of Contents */}
           <div className="px-8 py-8 bg-secondary/40">

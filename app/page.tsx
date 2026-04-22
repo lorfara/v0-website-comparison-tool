@@ -28,6 +28,29 @@ export default function Home() {
     setIsAnalyzing(false)
   }
 
+  const handleUseSampleData = () => {
+    const sampleData: WebhookResponseData = {
+      company_a: "CB2",
+      company_b: "West Elm",
+      generated: "2026-04-21",
+      executive_summary: {
+        homepage: [
+          "CB2 leads with aspirational design authority messaging",
+          "CB2 prioritizes lifestyle content over transactional elements",
+          "CB2 drives conversion through free design services CTA"
+        ],
+        promotions: [
+          "CB2 competes on volume with aggressive multi-tiered sales",
+          "West Elm protects premium positioning with unified sale hubs",
+          "West Elm leverages email with 15% acquisition incentive"
+        ]
+      },
+      core_dynamic: "CB2 competes on design authority while West Elm competes on promotional sophistication"
+    }
+    setWebhookData(sampleData)
+    setReportGenerated(true)
+  }
+
   const handleAnalyze = async () => {
     console.log('[v0] handleAnalyze called, current isAnalyzing:', isAnalyzing)
     
@@ -95,6 +118,7 @@ export default function Home() {
           setWebsite2={setWebsite2}
           onAnalyze={handleAnalyze}
           onStop={handleStop}
+          onUseSampleData={handleUseSampleData}
           isAnalyzing={isAnalyzing}
         />
         </div>

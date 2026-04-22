@@ -29,10 +29,11 @@ export default function Home() {
   }
 
   const handleLoadSampleData = () => {
+    const today = new Date().toISOString().split('T')[0]
     const sampleData: WebhookResponseData = {
       company_a: "CB2",
       company_b: "West Elm",
-      generated: "2026-04-21",
+      generated: today,
       executive_summary: {
         homepage: [
           "CB2 leads with aspirational design authority messaging, positioning itself as a tastemaker rather than a retailer",
@@ -94,7 +95,7 @@ export default function Home() {
       core_dynamic:
         "CB2 competes on design authority and editorial conviction while West Elm competes on promotional sophistication and values alignment. CB2 wins on aspiration; West Elm wins on trust.",
       appendix: [
-        "Data sourced from live site scrape on 2026-04-21",
+        `Data sourced from live site scrape on ${today}`,
         "Promotional offers subject to change without notice",
         "Brand voice analysis based on homepage copy at time of capture",
       ],

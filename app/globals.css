@@ -123,6 +123,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  li::marker {
+    color: var(--accent);
+  }
 }
 
 @media print {
@@ -148,7 +151,7 @@
     text-indent: 0;
   }
   li::marker {
-    color: #3D3D3D;
+    color: #C4956A;
   }
 
   body {
